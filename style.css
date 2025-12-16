@@ -1,1 +1,438 @@
-/* All style elements for your extension go here */
+/* Text Messaging Extension - Styles */
+
+/* ============================================
+   Phone Toggle Button (Floating)
+   ============================================ */
+
+.phone-toggle-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 9998;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.phone-toggle-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+}
+
+.phone-toggle-btn:active {
+  transform: scale(0.95);
+}
+
+/* ============================================
+   Phone UI Container
+   ============================================ */
+
+.phone-ui-container {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 400px;
+  height: 700px;
+  z-index: 9999;
+  transition: all 0.3s ease;
+}
+
+/* Phone Positions */
+.phone-ui-container.position-left {
+  left: 20px;
+}
+
+.phone-ui-container.position-center {
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.phone-ui-container.position-right {
+  right: 20px;
+}
+
+/* ============================================
+   Phone Frame
+   ============================================ */
+
+.phone-frame {
+  width: 100%;
+  height: 100%;
+  background: #1a1a1a;
+  border-radius: 40px;
+  border: 12px solid #0d0d0d;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Light Theme */
+.phone-ui-container.theme-light .phone-frame {
+  background: #ffffff;
+  border-color: #e0e0e0;
+}
+
+/* Phone Notch (optional, modern look) */
+.phone-frame::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 150px;
+  height: 25px;
+  background: #0d0d0d;
+  border-radius: 0 0 20px 20px;
+  z-index: 1;
+}
+
+.phone-ui-container.theme-light .phone-frame::before {
+  background: #e0e0e0;
+}
+
+/* ============================================
+   Phone Header
+   ============================================ */
+
+.phone-header {
+  background: #2a2a2a;
+  padding: 35px 20px 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #333;
+  z-index: 2;
+}
+
+.phone-ui-container.theme-light .phone-header {
+  background: #f5f5f5;
+  border-bottom-color: #ddd;
+}
+
+.phone-header-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.phone-ui-container.theme-light .phone-header-title {
+  color: #000000;
+}
+
+.phone-close-btn {
+  background: none;
+  border: none;
+  color: #999;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 5px 10px;
+  transition: color 0.2s;
+}
+
+.phone-close-btn:hover {
+  color: #fff;
+}
+
+.phone-ui-container.theme-light .phone-close-btn:hover {
+  color: #000;
+}
+
+/* ============================================
+   Context Summary
+   ============================================ */
+
+.phone-context-summary {
+  background: #252525;
+  padding: 10px 15px;
+  border-bottom: 1px solid #333;
+  font-size: 12px;
+  color: #888;
+  font-style: italic;
+}
+
+.phone-ui-container.theme-light .phone-context-summary {
+  background: #efefef;
+  border-bottom-color: #ddd;
+  color: #666;
+}
+
+/* ============================================
+   Messages Viewport (Scrollable)
+   ============================================ */
+
+.phone-viewport {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px 15px;
+  background: #1a1a1a;
+  scroll-behavior: smooth;
+}
+
+.phone-ui-container.theme-light .phone-viewport {
+  background: #ffffff;
+}
+
+/* Custom Scrollbar */
+.phone-viewport::-webkit-scrollbar {
+  width: 6px;
+}
+
+.phone-viewport::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.phone-viewport::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 3px;
+}
+
+.phone-ui-container.theme-light .phone-viewport::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* ============================================
+   Message Rows
+   ============================================ */
+
+.message-row {
+  margin-bottom: 12px;
+  animation: messageSlideIn 0.2s ease-out;
+}
+
+@keyframes messageSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.message-content {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+/* User messages align right */
+.message-row.user .message-content {
+  flex-direction: row-reverse;
+}
+
+/* ============================================
+   Message Bubbles
+   ============================================ */
+
+.message-bubble {
+  max-width: 280px;
+  padding: 12px 16px;
+  border-radius: 18px;
+  word-wrap: break-word;
+  position: relative;
+}
+
+/* User (sent) messages */
+.message-bubble.user {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 18px 18px 4px 18px;
+  margin-left: auto;
+}
+
+/* Character (received) messages */
+.message-bubble.character {
+  background: #2a2a2a;
+  color: #ffffff;
+  border-radius: 18px 18px 18px 4px;
+  margin-right: auto;
+}
+
+.phone-ui-container.theme-light .message-bubble.character {
+  background: #e5e5ea;
+  color: #000000;
+}
+
+/* Message Text */
+.message-text {
+  font-size: 15px;
+  line-height: 1.4;
+  margin: 0;
+}
+
+/* Message Timestamp */
+.message-timestamp {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 4px;
+  text-align: right;
+}
+
+.message-bubble.character .message-timestamp {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.phone-ui-container.theme-light .message-bubble.character .message-timestamp {
+  color: rgba(0, 0, 0, 0.5);
+}
+
+/* ============================================
+   Message Avatars
+   ============================================ */
+
+.message-avatar-wrapper {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+}
+
+.message-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #333;
+}
+
+.phone-ui-container.theme-light .message-avatar {
+  border-color: #ddd;
+}
+
+/* User avatar (icon) */
+.message-avatar.user-avatar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 14px;
+}
+
+/* Hide avatars for non-first messages in sequence */
+.message-row:not(.first-in-sequence) .message-avatar {
+  visibility: hidden;
+}
+
+/* ============================================
+   Message Input Area
+   ============================================ */
+
+.phone-input-area {
+  background: #2a2a2a;
+  padding: 15px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  border-top: 1px solid #333;
+}
+
+.phone-ui-container.theme-light .phone-input-area {
+  background: #f5f5f5;
+  border-top-color: #ddd;
+}
+
+.phone-message-input {
+  flex: 1;
+  background: #1a1a1a;
+  border: 1px solid #444;
+  border-radius: 20px;
+  padding: 10px 16px;
+  color: #ffffff;
+  font-size: 15px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.phone-ui-container.theme-light .phone-message-input {
+  background: #ffffff;
+  border-color: #ccc;
+  color: #000000;
+}
+
+.phone-message-input:focus {
+  border-color: #667eea;
+}
+
+.phone-message-input::placeholder {
+  color: #666;
+}
+
+.phone-ui-container.theme-light .phone-message-input::placeholder {
+  color: #999;
+}
+
+.phone-send-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s;
+}
+
+.phone-send-btn:hover {
+  transform: scale(1.1);
+}
+
+.phone-send-btn:active {
+  transform: scale(0.95);
+}
+
+/* ============================================
+   Responsive Adjustments
+   ============================================ */
+
+@media (max-height: 800px) {
+  .phone-ui-container {
+    height: 600px;
+  }
+}
+
+@media (max-width: 768px) {
+  .phone-ui-container {
+    width: 90%;
+    max-width: 400px;
+  }
+
+  .phone-ui-container.position-left,
+  .phone-ui-container.position-right {
+    left: 50%;
+    right: auto;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* ============================================
+   Utility Classes
+   ============================================ */
+
+.phone-ui-container * {
+  box-sizing: border-box;
+}
+
+/* Prevent text selection in UI elements */
+.phone-header,
+.phone-close-btn,
+.phone-send-btn,
+.phone-toggle-btn {
+  user-select: none;
+  -webkit-user-select: none;
+}

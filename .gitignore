@@ -1,2 +1,63 @@
+# Reference materials (keep local)
 reference/yetanotherphone-1.0-pc/
-AGENTS.md
+
+# Development documentation (keep in repo)
+# AGENTS.md is useful for AI-assisted development
+# AGENTS.md
+
+# Node.js (if using build tools)
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# IDE & Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# OS files
+Thumbs.db
+desktop.ini
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+*.key
+*.pem
+config.local.js
+
+# Build outputs (if using bundler)
+dist/
+build/
+*.min.js
+*.bundle.js
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# SillyTavern specific (if testing locally)
+# settings.json
+# user-settings.json

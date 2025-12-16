@@ -1,0 +1,87 @@
+<!-- Text Messaging Extension Settings -->
+<div class="text-messaging-settings">
+  <div class="inline-drawer">
+    <div class="inline-drawer-toggle inline-drawer-header">
+      <b>📱 Text Messaging</b>
+      <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
+    </div>
+    <div class="inline-drawer-content">
+
+      <!-- Enable Phone Mode -->
+      <label class="checkbox_label" for="phone_mode_enabled">
+        <input id="phone_mode_enabled" type="checkbox" />
+        <span>Enable Phone UI</span>
+      </label>
+      <small class="notes">Show messages in phone interface</small>
+
+      <hr class="sysHR" />
+
+      <!-- Texting Style -->
+      <label class="checkbox_label" for="texting_style_enabled">
+        <input id="texting_style_enabled" type="checkbox" />
+        <span>Use Texting Style Responses</span>
+      </label>
+      <small class="notes">AI uses emojis, shorthand, and casual language</small>
+
+      <!-- Emoji Intensity -->
+      <div class="margin-top-10">
+        <label for="emoji_intensity">
+          <span>Emoji & Shorthand Intensity</span>
+        </label>
+        <select id="emoji_intensity" class="text_pole">
+          <option value="low">Low (subtle)</option>
+          <option value="medium">Medium (balanced)</option>
+          <option value="high">High (very casual)</option>
+        </select>
+        <small class="notes">How much emoji/slang the AI should use</small>
+      </div>
+
+      <hr class="sysHR" />
+
+      <!-- Phone Position -->
+      <div class="margin-top-10">
+        <label for="phone_position">
+          <span>Phone Position</span>
+        </label>
+        <select id="phone_position" class="text_pole">
+          <option value="left">Left</option>
+          <option value="center">Center</option>
+          <option value="right">Right</option>
+        </select>
+      </div>
+
+      <!-- Theme -->
+      <div class="margin-top-10">
+        <label for="phone_theme">
+          <span>Phone Theme</span>
+        </label>
+        <select id="phone_theme" class="text_pole">
+          <option value="dark">Dark</option>
+          <option value="light">Light</option>
+        </select>
+      </div>
+
+      <hr class="sysHR" />
+
+      <!-- Sound Effects -->
+      <label class="checkbox_label" for="sound_enabled">
+        <input id="sound_enabled" type="checkbox" />
+        <span>Sound Effects</span>
+      </label>
+      <small class="notes">Play sounds on send/receive</small>
+
+      <!-- Show Timestamps -->
+      <label class="checkbox_label" for="show_timestamps">
+        <input id="show_timestamps" type="checkbox" />
+        <span>Show Timestamps</span>
+      </label>
+
+      <!-- Animations -->
+      <label class="checkbox_label" for="animations_enabled">
+        <input id="animations_enabled" type="checkbox" />
+        <span>Enable Animations</span>
+      </label>
+
+    </div>
+  </div>
+</div>

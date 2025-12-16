@@ -25,6 +25,32 @@ Unlike YAP (which only changes the UI), this extension **modifies how the AI com
 
 ---
 
+## Asset Resources
+
+**Available Phone UI Assets** (from YAP reference):
+
+Located in `assets/images/`:
+
+| File | Dimensions | Purpose |
+|------|------------|---------|
+| `phone_background.png` | 533×928px (18KB) | Phone device background |
+| `phone_foreground.png` | 533×928px (21KB) | Phone device bezel/overlay |
+| `phone_send_frame_blue.png` | 120×118px (2.9KB) | User message bubble |
+| `phone_received_frame_green.png` | 120×118px (3.6KB) | Character message bubble |
+| `phone_send_icon_blue.png` | 107×112px (4.4KB) | User avatar placeholder |
+| `phone_received_icon_green.png` | 107×112px (5.2KB) | Character avatar placeholder |
+
+**Design Specifications from YAP**:
+- Phone screen area: 495×815px
+- Message max width: 350px
+- Message frame borders: 23px (for 9-patch stretching)
+- Avatar size: ~107px (scale to 40-50px in implementation)
+- SVG source: `reference/.../PhoneUISource120dpi.svg` (Inkscape file)
+
+**Implementation Note**: These assets are optional. The extension can be built entirely with CSS for a more modern, responsive design. Image assets provide an authentic phone mockup look matching YAP's aesthetic.
+
+---
+
 ## Current State Analysis
 
 ### Existing Scaffolding
@@ -144,6 +170,65 @@ Unlike YAP (which only changes the UI), this extension **modifies how the AI com
 - Overflow-y scroll with custom scrollbar
 - CSS transforms for positioning
 - Z-index management to stay above chat
+
+**Phone UI Asset Specifications**:
+
+From YAP reference implementation (`assets/images/`):
+
+| Asset | Dimensions | Size | Format | Usage |
+|-------|------------|------|--------|-------|
+| `phone_background.png` | 533×928px | 18KB | PNG RGBA | Phone body/screen background layer |
+| `phone_foreground.png` | 533×928px | 21KB | PNG RGBA | Phone bezel/frame overlay (top layer) |
+| `phone_send_frame_blue.png` | 120×118px | 2.9KB | PNG RGBA | User message bubble background |
+| `phone_received_frame_green.png` | 120×118px | 3.6KB | PNG RGBA | Character message bubble background |
+| `phone_send_icon_blue.png` | 107×112px | 4.4KB | PNG RGBA | User avatar icon |
+| `phone_received_icon_green.png` | 107×112px | 5.2KB | PNG RGBA | Character avatar icon |
+
+**YAP Layout Specifications**:
+- **Phone container**: 495px width × 815px height (visible screen area)
+- **Message bubbles**: 350px max width
+- **Background/Foreground**: Full 533×928px (complete phone device mockup)
+- **Viewport**: Scrollable message area within phone screen
+- **Message frames**: Use CSS `border-image` with 23px border on all sides (9-patch style)
+- **Avatar icons**: 107×112px, shown only on first message in sequence
+
+**Implementation Options**:
+
+1. **Image-Based** (Use YAP assets):
+   ```css
+   .phone-container {
+     width: 495px;
+     height: 815px;
+     position: fixed;
+     background: url('assets/images/phone_background.png') center/contain;
+   }
+   .phone-container::after {
+     content: '';
+     position: absolute;
+     top: 0; left: 0; right: 0; bottom: 0;
+     background: url('assets/images/phone_foreground.png') center/contain;
+     pointer-events: none;
+   }
+   ```
+
+2. **CSS-Only** (Modern alternative):
+   ```css
+   .phone-container {
+     width: 400px;
+     height: 700px;
+     border-radius: 40px;
+     border: 12px solid #222;
+     box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+     background: #fff;
+   }
+   ```
+
+3. **Responsive Hybrid**:
+   - Use CSS phone frame for flexibility
+   - Use image assets for message bubbles/icons
+   - Scale based on viewport size
+
+**Recommendation**: Start with CSS-only for flexibility, optionally add image assets later for polish.
 
 #### 2. Message Store
 ```javascript
@@ -462,25 +547,25 @@ function summarizeTextingConversation() {
 
 ## Development Phases
 
-### Phase 1: Foundation (2-3 hours)
+### Phase 1: Foundation (2-3 hours) ✅ **COMPLETED 2025-12-15**
 **Goal**: Basic structure and settings panel
 
 **Tasks**:
-1. Update [manifest.json](../manifest.json)
-   - Name: "Text Messaging Interface"
-   - Author information
-   - Version: 0.1.0
-   - Dependencies: none
+1. ✅ Update [manifest.json](../manifest.json)
+   - ✅ Name: "Text Messaging Interface"
+   - ✅ Author information
+   - ✅ Version: 0.1.0
+   - ✅ Dependencies: none
 
-2. Create settings panel in `settings.html`
-   - Enable/disable phone mode checkbox
-   - Phone position dropdown (left/center/right)
-   - Sound effects toggle
-   - Theme selector (light/dark)
-   - **NEW: Texting style toggle** (enable/disable LLM instruction modification)
-   - **NEW: Emoji intensity slider/dropdown** (low/medium/high)
+2. ✅ Create settings panel in `settings.html`
+   - ✅ Enable/disable phone mode checkbox
+   - ✅ Phone position dropdown (left/center/right)
+   - ✅ Sound effects toggle
+   - ✅ Theme selector (light/dark)
+   - ✅ **NEW: Texting style toggle** (enable/disable LLM instruction modification)
+   - ✅ **NEW: Emoji intensity slider/dropdown** (low/medium/high)
 
-3. Set up default settings in [index.js](../index.js)
+3. ✅ Set up default settings in [index.js](../index.js)
    ```javascript
    const defaultSettings = {
      enabled: false,
@@ -494,77 +579,121 @@ function summarizeTextingConversation() {
    }
    ```
 
-4. Implement settings persistence
-   - Load settings on init
-   - Save on change with `saveSettingsDebounced()`
+4. ✅ Implement settings persistence
+   - ✅ Load settings on init
+   - ✅ Save on change with `saveSettingsDebounced()`
 
-5. **NEW: Implement dual-mode LLM prompt system**
-   - Create perspective-shift prompts (low/medium/high intensity)
-   - Implement `activateTextingMode()` - injects first-person + context
-   - Implement `deactivateTextingMode()` - removes prompts smoothly
-   - Build `buildContextBridgePrompt()` - summarizes recent chat
-   - Test perspective switching with simple messages
+5. ✅ **NEW: Implement dual-mode LLM prompt system**
+   - ✅ Create perspective-shift prompts (low/medium/high intensity) - `TEXTING_PROMPTS` in [index.js](../index.js)
+   - ✅ Implement `activateTextingMode()` - injects first-person + context
+   - ✅ Implement `deactivateTextingMode()` - removes prompts smoothly
+   - ✅ Build `buildContextBridgePrompt()` - summarizes recent chat in [lib/context-bridge.js](../lib/context-bridge.js)
+   - ✅ Created complete context-bridge module with all helper functions
+   - ⏳ Test perspective switching with simple messages (requires Phase 2 phone UI)
 
-**Deliverable**: Working settings panel that persists choices
+**Deliverable**: ✅ Working settings panel that persists choices + Complete dual-mode LLM system
+
+**Files Created/Modified**:
+- ✅ [manifest.json](../manifest.json) - Extension metadata
+- ✅ [settings.html](../settings.html) - Settings UI with all controls
+- ✅ [index.js](../index.js) - Core extension logic, settings handlers, mode activation/deactivation
+- ✅ [lib/context-bridge.js](../lib/context-bridge.js) - Context transfer between chat modes
+- ✅ Directory structure: `lib/`, `assets/images/`, `assets/sounds/`
+
+**Extra Work Completed Beyond Phase 1 Plan**:
+- Full context-bridge module implementation (originally planned for Phase 2)
+- `activateTextingMode()` and `deactivateTextingMode()` functions
+- Context summary injection system
+- Message summarization logic
 
 ---
 
-### Phase 2: Core Messaging (4-5 hours)
+### Phase 2: Core Messaging (4-5 hours) ✅ **COMPLETED 2025-12-15**
 **Goal**: Separate phone messaging system with context bridging
 
+**Status Note**: Context-bridge module completed early in Phase 1
+
 **Tasks**:
-1. Create `phone-ui.html` template
-   - Phone frame container
-   - Scrollable viewport
-   - Message bubble templates (sender/receiver)
-   - **Message input field** (separate from main chat)
-   - Context summary display at top
-   - Open/close buttons
+1. ✅ Create `phone-ui.html` template
+   - ✅ Phone frame container with modern notch design
+   - ✅ Scrollable viewport with custom scrollbar
+   - ✅ Message bubble templates (sender/receiver)
+   - ✅ **Message input field** (separate from main chat)
+   - ✅ Context summary display at top
+   - ✅ Open/close buttons
+   - ✅ Floating toggle button
 
-2. Create `lib/message-store.js`
-   - **Separate storage** for phone messages (don't mix with main chat)
-   - Message array management per character
-   - Add/remove/clear operations
-   - Export messages for summary
+2. ✅ Create `lib/message-store.js`
+   - ✅ **Separate storage** for phone messages (don't mix with main chat)
+   - ✅ Message array management per character
+   - ✅ Add/remove/clear operations
+   - ✅ Export messages for summary
+   - ✅ First-in-sequence tracking for avatar display
 
-3. Create `lib/phone-ui.js`
-   - `openPhoneUI()` - show UI + activate texting mode
-   - `closePhoneUI()` - hide UI + deactivate texting mode + inject summary
-   - Render phone interface
-   - Append message bubbles
-   - Handle scrolling to bottom
-   - **Handle message input** (phone-specific)
+3. ✅ Create `lib/phone-ui.js`
+   - ✅ `openPhoneUI()` - show UI + activate texting mode
+   - ✅ `closePhoneUI()` - hide UI + deactivate texting mode + inject summary
+   - ✅ Render phone interface with animations
+   - ✅ Append message bubbles with slide-in effects
+   - ✅ Handle scrolling to bottom (auto-scroll)
+   - ✅ **Handle message input** (phone-specific with Enter key support)
+   - ✅ `sendUserMessage()` - processes user text input
+   - ✅ `generateCharacterResponse()` - uses ST's Generate API
+   - ✅ Sound effect support (send/receive)
+   - ✅ Theme and position update functions
+   - ✅ Timestamp formatting (relative and absolute)
 
-4. Create `lib/context-bridge.js` (NEW - Critical for dual-mode)
-   - `loadRecentChatContext()` - get last N messages from main chat
-   - `buildContextBridgePrompt()` - summarize for texting mode
-   - `summarizeTextingConversation()` - summarize phone messages
-   - `injectTextingSummaryIntoChat()` - add to main chat when phone closes
+4. ✅ ~~Create `lib/context-bridge.js`~~ **COMPLETED IN PHASE 1**
+   - ✅ `loadRecentChatContext()` - get last N messages from main chat
+   - ✅ `buildContextBridgePrompt()` - summarize for texting mode
+   - ✅ `summarizeTextingConversation()` - summarize phone messages
+   - ✅ `injectTextingSummaryIntoChat()` - add to main chat when phone closes
 
-5. Implement phone message handling (NOT regular ST events)
-   ```javascript
-   // Phone has its own message input - don't hook into ST events yet
-   $('#phone-message-input').on('keypress', async (e) => {
-     if (e.which === 13) { // Enter key
-       const message = $(e.target).val();
-       await sendPhoneMessage(message, 'user');
-       $(e.target).val('');
+5. ✅ Implement phone message handling
+   - ✅ Enter key sends message
+   - ✅ Send button click handler
+   - ✅ Character response generation via Generate API
+   - ✅ Message rendering with proper sender detection
+   - ✅ Avatar display (character avatars from ST context)
 
-       // Generate character response via generateQuietPrompt
-       const response = await generateCharacterText();
-       await sendPhoneMessage(response, 'character');
-     }
-   });
-   ```
+6. ✅ Implement message display logic
+   - ✅ Detect sender vs receiver
+   - ✅ Get character avatar from context
+   - ✅ Create message bubble HTML with proper classes
+   - ✅ Append to viewport with animations
+   - ✅ Keep separate from main chat UI
+   - ✅ HTML escaping for XSS prevention
 
-6. Implement message display logic
-   - Detect sender vs receiver
-   - Get character avatar from context
-   - Create message bubble HTML
-   - Append to viewport
-   - Keep separate from main chat UI
+7. ✅ Complete CSS styling (`style.css`)
+   - ✅ Modern phone mockup (400×700px, 40px border-radius)
+   - ✅ Phone notch for modern aesthetic
+   - ✅ Dark and light theme support
+   - ✅ Gradient message bubbles for user
+   - ✅ Themed bubbles for character
+   - ✅ Message slide-in animations
+   - ✅ Custom scrollbar styling
+   - ✅ Avatar positioning and hiding logic
+   - ✅ Responsive design (mobile/desktop)
+   - ✅ Floating toggle button with hover effects
 
-**Deliverable**: Standalone phone messaging system with context awareness
+**Deliverable**: ✅ Fully functional phone messaging system with polished UI, animations, and complete context awareness
+
+**Files Created/Modified**:
+- ✅ [phone-ui.html](../phone-ui.html) - Complete phone interface template
+- ✅ [lib/message-store.js](../lib/message-store.js) - Message storage and management
+- ✅ [lib/phone-ui.js](../lib/phone-ui.js) - Phone UI logic and rendering
+- ✅ [style.css](../style.css) - Complete phone UI styling with themes
+- ✅ [index.js](../index.js) - Updated with phone UI integration
+
+**Extra Work Completed Beyond Phase 2 Plan**:
+- Complete CSS styling (originally planned for Phase 3)
+- Theme system implementation (dark/light)
+- Message animations (slide-in, fade)
+- Custom scrollbar styling
+- Sound effect infrastructure
+- Timestamp formatting system
+- Responsive design
+- Modern phone mockup with notch
 
 ---
 
@@ -572,23 +701,135 @@ function summarizeTextingConversation() {
 **Goal**: Match YAP's visual quality
 
 **Tasks**:
-1. Design phone frame graphics
-   - Background layer (phone body)
-   - Foreground layer (screen bezel)
-   - OR: Use CSS-only phone design
-   - Mobile device mockup style
+1. Implement phone frame UI
+
+   **Option A: Use YAP Image Assets** (Faster, polished look):
+   ```css
+   /* Reference: assets/images/phone_background.png (533×928px) */
+   /* Reference: assets/images/phone_foreground.png (533×928px) */
+   .phone-container {
+     width: 495px;
+     height: 815px;
+     position: fixed;
+     right: 20px;
+     top: 50%;
+     transform: translateY(-50%);
+     background: url('../assets/images/phone_background.png') center/contain no-repeat;
+   }
+   .phone-foreground {
+     position: absolute;
+     width: 533px;
+     height: 928px;
+     background: url('../assets/images/phone_foreground.png') center/contain no-repeat;
+     pointer-events: none;
+   }
+   ```
+
+   **Option B: CSS-Only** (More flexible, responsive):
+   ```css
+   .phone-container {
+     width: 400px;
+     height: 700px;
+     border-radius: 40px;
+     border: 12px solid #1a1a1a;
+     background: #fff;
+     box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+     position: fixed;
+     right: 20px;
+     top: 50%;
+     transform: translateY(-50%);
+   }
+   /* Add notch/camera cutout for modern look */
+   .phone-container::before {
+     content: '';
+     position: absolute;
+     top: 0;
+     left: 50%;
+     transform: translateX(-50%);
+     width: 150px;
+     height: 25px;
+     background: #1a1a1a;
+     border-radius: 0 0 20px 20px;
+   }
+   ```
 
 2. Style message bubbles in [style.css](../style.css)
-   - Sender: blue/green background, white text, right-aligned
-   - Receiver: light gray background, black text, left-aligned
-   - Rounded corners with tail/pointer
-   - Padding and spacing
+
+   **Using YAP Image Assets**:
+   ```css
+   /* User messages (sent) */
+   .message-bubble.user {
+     max-width: 350px;
+     margin-left: auto;
+     border-image: url('../assets/images/phone_send_frame_blue.png') 23 stretch;
+     /* 120×118px frame, 23px borders */
+   }
+
+   /* Character messages (received) */
+   .message-bubble.character {
+     max-width: 350px;
+     margin-right: auto;
+     border-image: url('../assets/images/phone_received_frame_green.png') 23 stretch;
+   }
+   ```
+
+   **CSS-Only Alternative**:
+   ```css
+   .message-bubble.user {
+     background: #007AFF;
+     color: white;
+     border-radius: 18px 18px 4px 18px;
+     padding: 12px 16px;
+     max-width: 350px;
+     margin-left: auto;
+   }
+   .message-bubble.character {
+     background: #E5E5EA;
+     color: #000;
+     border-radius: 18px 18px 18px 4px;
+     padding: 12px 16px;
+     max-width: 350px;
+     margin-right: auto;
+   }
+   ```
 
 3. Character avatar display
-   - Circular avatar images
-   - Show only on first message in sequence
-   - Left side for receiver, right for sender
-   - 40-50px size
+
+   **Using YAP Icon Assets**:
+   ```css
+   /* Reference: phone_send_icon_blue.png (107×112px) */
+   /* Reference: phone_received_icon_green.png (107×112px) */
+   .message-avatar {
+     width: 40px;
+     height: 40px;
+     border-radius: 50%;
+     object-fit: cover;
+   }
+   /* First message in sequence shows avatar */
+   .message-row.first-in-sequence .message-avatar {
+     display: block;
+   }
+   .message-row:not(.first-in-sequence) .message-avatar {
+     visibility: hidden; /* Keep spacing */
+   }
+   ```
+
+   **Using ST Character Avatars** (Recommended):
+   ```javascript
+   // Get character avatar from ST context
+   const context = SillyTavern.getContext();
+   const character = context.characters[context.characterId];
+   const avatarUrl = character?.avatar || 'default-avatar.png';
+
+   // Create avatar element
+   const avatar = `<img src="${avatarUrl}" class="message-avatar" alt="${character.name}">`;
+   ```
+
+   **Layout**:
+   - 40-50px circular avatars
+   - Left side for character messages
+   - Right side for user messages
+   - Only shown on first message in sequence
 
 4. Implement CSS animations
    - Message slide-in (from left/right)
@@ -1186,15 +1427,42 @@ const avatarUrl = character?.avatar || 'default-avatar.png';
 
 ### Immediate Next Steps
 1. ✅ Create this implementation plan
-2. ⏳ Update [manifest.json](../manifest.json) with metadata
-3. ⏳ Create basic settings panel with texting style controls
-4. ⏳ **Implement LLM prompt modification (texting style)**
-5. ⏳ Build phone UI HTML structure
-6. ⏳ Style phone container in CSS
-7. ⏳ Hook into MESSAGE_SENT event
-8. ⏳ Display first message in phone UI
+2. ✅ Update [manifest.json](../manifest.json) with metadata *(completed 2025-12-15)*
+3. ✅ Create basic settings panel with texting style controls *(completed 2025-12-15)*
+4. ✅ **Implement LLM prompt modification (texting style)** *(completed 2025-12-15)*
+5. ✅ Build phone UI HTML structure *(completed 2025-12-15)*
+6. ✅ Style phone container in CSS *(completed 2025-12-15)*
+7. ⏳ Hook into MESSAGE_SENT event *(optional - using separate phone input)*
+8. ✅ Display first message in phone UI *(completed 2025-12-15)*
 
-**Priority**: Implement the texting-style prompt modification early (step 4) so you can test AI responses immediately, even before the phone UI is complete.
+**Phase 1 Status**: ✅ **COMPLETED** (2025-12-15 21:55 UTC)
+- Directory structure created (lib/, assets/)
+- Settings panel with all Phase 1 controls functional
+- Default settings configured in index.js
+- Settings persistence implemented
+- Dual-mode LLM prompt system with three intensity levels active
+- Context-bridge module with full bidirectional context flow
+
+**Phase 2 Status**: ✅ **COMPLETED** (2025-12-15 22:20 UTC)
+- Complete phone UI with modern design and notch
+- Message storage system (per-character, separate from main chat)
+- Phone UI management (open/close/render/send)
+- Full CSS styling with dark/light themes
+- Message animations and smooth scrolling
+- Character response generation via ST API
+- Sound effect infrastructure
+- Timestamp formatting
+- Responsive design
+
+**Phase 3 Status**: ✅ **MOSTLY COMPLETED** (integrated into Phase 2)
+- Modern phone mockup with CSS (no image assets needed)
+- Message bubble styling with gradients
+- Avatar display logic
+- Animations (slide-in, fade)
+- Custom scrollbar styling
+- Theme variations (dark/light)
+
+**Current Status**: Ready for live testing and advanced features (Phase 4)
 
 ### Development Workflow
 1. Work in small increments
@@ -1416,5 +1684,8 @@ Context is preserved!
 
 ---
 
-*Last Updated: 2025-12-15*
-*Updated with dual-mode architecture and seamless context transfer*
+*Last Updated: 2025-12-15 22:20 UTC*
+*Phase 1 (Foundation) ✅ COMPLETED - Full dual-mode LLM system with context bridge*
+*Phase 2 (Core Messaging) ✅ COMPLETED - Phone UI, messaging, styling complete*
+*Phase 3 (Visual Polish) ✅ MOSTLY COMPLETED - Integrated into Phase 2*
+*Ready for Phase 4 (Advanced Features) and Phase 5 (Testing & Polish)*

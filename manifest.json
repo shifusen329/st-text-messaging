@@ -1,11 +1,11 @@
 {
-    "display_name": "Name Displayed in SillyTavern",
+    "display_name": "Text Messaging Interface",
     "loading_order": 9,
     "requires": [],
     "optional": [],
     "js": "index.js",
     "css": "style.css",
-    "author": "yourNameHere",
-    "version": "1.0.0",
-    "homePage": "yourUrlHere"
+    "author": "shifusen329",
+    "version": "0.1.0",
+    "homePage": "https://github.com/shifusen329/st-text-messaging"
 }

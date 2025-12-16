@@ -1,0 +1,72 @@
+<!-- Phone UI Template -->
+<div id="phone-ui-container" class="phone-ui-container" style="display: none;">
+  <!-- Phone Frame -->
+  <div class="phone-frame">
+
+    <!-- Phone Header -->
+    <div class="phone-header">
+      <div class="phone-header-title">
+        <span id="phone-contact-name">Messages</span>
+      </div>
+      <button id="phone-close-btn" class="phone-close-btn" title="Close phone">
+        <i class="fa-solid fa-times"></i>
+      </button>
+    </div>
+
+    <!-- Context Summary (optional display) -->
+    <div id="phone-context-summary" class="phone-context-summary" style="display: none;">
+      <small id="phone-context-text"></small>
+    </div>
+
+    <!-- Messages Viewport (scrollable) -->
+    <div id="phone-viewport" class="phone-viewport">
+      <!-- Messages will be appended here dynamically -->
+
+      <!-- Example message structure (templates, hidden by default):
+      <div class="message-row user first-in-sequence">
+        <div class="message-content">
+          <div class="message-avatar-wrapper">
+            <img src="avatar.png" class="message-avatar" alt="User">
+          </div>
+          <div class="message-bubble user">
+            <div class="message-text">Hey, how are you?</div>
+            <div class="message-timestamp">10:23 AM</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="message-row character first-in-sequence">
+        <div class="message-content">
+          <div class="message-bubble character">
+            <div class="message-text">I'm good! How about you? 😊</div>
+            <div class="message-timestamp">10:24 AM</div>
+          </div>
+          <div class="message-avatar-wrapper">
+            <img src="avatar.png" class="message-avatar" alt="Character">
+          </div>
+        </div>
+      </div>
+      -->
+    </div>
+
+    <!-- Message Input Area -->
+    <div class="phone-input-area">
+      <input
+        type="text"
+        id="phone-message-input"
+        class="phone-message-input"
+        placeholder="Type a message..."
+        autocomplete="off"
+      />
+      <button id="phone-send-btn" class="phone-send-btn" title="Send message">
+        <i class="fa-solid fa-paper-plane"></i>
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Phone Toggle Button (floating button to open phone) -->
+<button id="phone-toggle-btn" class="phone-toggle-btn" title="Open phone" style="display: none;">
+  <i class="fa-solid fa-mobile-screen"></i>
+</button>
