@@ -1,6 +1,6 @@
 // Text Messaging Extension - Main Script
-import { extension_settings } from "../../../../extensions.js";
-import { saveSettingsDebounced } from "../../../../../script.js";
+import { extension_settings } from "../../../extensions.js";
+import { saveSettingsDebounced } from "../../../../script.js";
 import {
   initPhoneUI,
   updatePhonePosition,
