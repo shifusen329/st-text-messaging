@@ -1,6 +1,4 @@
 // Text Messaging Extension - Main Script
-import { extension_settings } from "../../../extensions.js";
-import { saveSettingsDebounced } from "../../../../script.js";
 import {
   initPhoneUI,
   updatePhonePosition,
@@ -12,7 +10,22 @@ import {
 
 // Extension configuration
 const extensionName = "st-text-messaging";
-const extensionFolderPath = `scripts/extensions/third-party/${extensionName}`;
+const extensionFolderUrl = new URL('.', import.meta.url);
+
+function getContext() {
+  return SillyTavern.getContext();
+}
+
+function getSettingsStore() {
+  const context = getContext();
+  return context?.extensionSettings ?? window.extension_settings ?? {};
+}
+
+function saveSettings() {
+  const context = getContext();
+  const fn = context?.saveSettingsDebounced ?? window.saveSettingsDebounced;
+  if (typeof fn === 'function') fn();
+}
 
 // Default settings
 const defaultSettings = {
@@ -30,6 +43,7 @@ const defaultSettings = {
  * Loads extension settings from storage
  */
 async function loadSettings() {
+  const extension_settings = getSettingsStore();
   // Create the settings if they don't exist
   extension_settings[extensionName] = extension_settings[extensionName] || {};
   if (Object.keys(extension_settings[extensionName]).length === 0) {
@@ -51,9 +65,10 @@ async function loadSettings() {
  * Event handler: Phone mode enabled/disabled
  */
 function onPhoneModeToggle(event) {
+  const extension_settings = getSettingsStore();
   const enabled = Boolean($(event.target).prop("checked"));
   extension_settings[extensionName].enabled = enabled;
-  saveSettingsDebounced();
+  saveSettings();
 
   // Update prompt injection
   updateTextingPrompt();
@@ -72,9 +87,10 @@ function onPhoneModeToggle(event) {
  * Event handler: Texting style toggled
  */
 function onTextingStyleToggle(event) {
+  const extension_settings = getSettingsStore();
   const enabled = Boolean($(event.target).prop("checked"));
   extension_settings[extensionName].useTextingStyle = enabled;
-  saveSettingsDebounced();
+  saveSettings();
 
   // Update prompt injection
   updateTextingPrompt();
@@ -84,9 +100,10 @@ function onTextingStyleToggle(event) {
  * Event handler: Emoji intensity changed
  */
 function onEmojiIntensityChange(event) {
+  const extension_settings = getSettingsStore();
   const intensity = $(event.target).val();
   extension_settings[extensionName].emojiIntensity = intensity;
-  saveSettingsDebounced();
+  saveSettings();
 
   // Update prompt injection
   updateTextingPrompt();
@@ -97,9 +114,10 @@ function onEmojiIntensityChange(event) {
  * Event handler: Phone position changed
  */
 function onPhonePositionChange(event) {
+  const extension_settings = getSettingsStore();
   const position = $(event.target).val();
   extension_settings[extensionName].position = position;
-  saveSettingsDebounced();
+  saveSettings();
   updatePhonePosition();
 }
 
@@ -107,9 +125,10 @@ function onPhonePositionChange(event) {
  * Event handler: Theme changed
  */
 function onThemeChange(event) {
+  const extension_settings = getSettingsStore();
   const theme = $(event.target).val();
   extension_settings[extensionName].theme = theme;
-  saveSettingsDebounced();
+  saveSettings();
   updatePhoneTheme();
 }
 
@@ -117,27 +136,30 @@ function onThemeChange(event) {
  * Event handler: Sound toggle
  */
 function onSoundToggle(event) {
+  const extension_settings = getSettingsStore();
   const enabled = Boolean($(event.target).prop("checked"));
   extension_settings[extensionName].soundEnabled = enabled;
-  saveSettingsDebounced();
+  saveSettings();
 }
 
 /**
  * Event handler: Timestamps toggle
  */
 function onTimestampsToggle(event) {
+  const extension_settings = getSettingsStore();
   const enabled = Boolean($(event.target).prop("checked"));
   extension_settings[extensionName].showTimestamps = enabled;
-  saveSettingsDebounced();
+  saveSettings();
 }
 
 /**
  * Event handler: Animations toggle
  */
 function onAnimationsToggle(event) {
+  const extension_settings = getSettingsStore();
   const enabled = Boolean($(event.target).prop("checked"));
   extension_settings[extensionName].animationsEnabled = enabled;
-  saveSettingsDebounced();
+  saveSettings();
 }
 
 // Extension initialization
@@ -146,14 +168,14 @@ jQuery(async () => {
     console.log('[st-text-messaging] Starting extension initialization...');
 
     // Load settings HTML
-    const settingsHtml = await $.get(`${extensionFolderPath}/settings.html`);
+    const settingsHtml = await $.get(new URL('settings.html', extensionFolderUrl).toString());
     console.log('[st-text-messaging] Settings HTML loaded');
 
     // Append to right column (UI-related extensions)
     $("#extensions_settings2").append(settingsHtml);
 
     // Load phone UI HTML
-    const phoneUIHtml = await $.get(`${extensionFolderPath}/phone-ui.html`);
+    const phoneUIHtml = await $.get(new URL('phone-ui.html', extensionFolderUrl).toString());
     console.log('[st-text-messaging] Phone UI HTML loaded');
 
     // Append phone UI to body
@@ -182,6 +204,7 @@ jQuery(async () => {
     updateTextingPrompt();
 
     // Show phone toggle button if enabled
+    const extension_settings = getSettingsStore();
     if (extension_settings[extensionName]?.enabled) {
       $('#phone-toggle-btn').show();
     }
