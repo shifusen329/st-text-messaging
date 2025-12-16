@@ -142,41 +142,54 @@ function onAnimationsToggle(event) {
 
 // Extension initialization
 jQuery(async () => {
-  // Load settings HTML
-  const settingsHtml = await $.get(`${extensionFolderPath}/settings.html`);
+  try {
+    console.log('[st-text-messaging] Starting extension initialization...');
 
-  // Append to right column (UI-related extensions)
-  $("#extensions_settings2").append(settingsHtml);
+    // Load settings HTML
+    const settingsHtml = await $.get(`${extensionFolderPath}/settings.html`);
+    console.log('[st-text-messaging] Settings HTML loaded');
 
-  // Load phone UI HTML
-  const phoneUIHtml = await $.get(`${extensionFolderPath}/phone-ui.html`);
+    // Append to right column (UI-related extensions)
+    $("#extensions_settings2").append(settingsHtml);
 
-  // Append phone UI to body
-  $("body").append(phoneUIHtml);
+    // Load phone UI HTML
+    const phoneUIHtml = await $.get(`${extensionFolderPath}/phone-ui.html`);
+    console.log('[st-text-messaging] Phone UI HTML loaded');
 
-  // Register settings event listeners
-  $("#phone_mode_enabled").on("input", onPhoneModeToggle);
-  $("#texting_style_enabled").on("input", onTextingStyleToggle);
-  $("#emoji_intensity").on("change", onEmojiIntensityChange);
-  $("#phone_position").on("change", onPhonePositionChange);
-  $("#phone_theme").on("change", onThemeChange);
-  $("#sound_enabled").on("input", onSoundToggle);
-  $("#show_timestamps").on("input", onTimestampsToggle);
-  $("#animations_enabled").on("input", onAnimationsToggle);
+    // Append phone UI to body
+    $("body").append(phoneUIHtml);
 
-  // Load settings
-  await loadSettings();
+    // Register settings event listeners
+    $("#phone_mode_enabled").on("input", onPhoneModeToggle);
+    $("#texting_style_enabled").on("input", onTextingStyleToggle);
+    $("#emoji_intensity").on("change", onEmojiIntensityChange);
+    $("#phone_position").on("change", onPhonePositionChange);
+    $("#phone_theme").on("change", onThemeChange);
+    $("#sound_enabled").on("input", onSoundToggle);
+    $("#show_timestamps").on("input", onTimestampsToggle);
+    $("#animations_enabled").on("input", onAnimationsToggle);
+    console.log('[st-text-messaging] Event listeners registered');
 
-  // Initialize phone UI
-  initPhoneUI();
+    // Load settings
+    await loadSettings();
+    console.log('[st-text-messaging] Settings loaded');
 
-  // Initialize prompt on load
-  updateTextingPrompt();
+    // Initialize phone UI
+    initPhoneUI();
+    console.log('[st-text-messaging] Phone UI initialized');
 
-  // Show phone toggle button if enabled
-  if (extension_settings[extensionName]?.enabled) {
-    $('#phone-toggle-btn').show();
+    // Initialize prompt on load
+    updateTextingPrompt();
+
+    // Show phone toggle button if enabled
+    if (extension_settings[extensionName]?.enabled) {
+      $('#phone-toggle-btn').show();
+    }
+
+    console.log('[st-text-messaging] Extension loaded successfully');
+  } catch (error) {
+    console.error('[st-text-messaging] Extension initialization error:', error);
+    console.error('[st-text-messaging] Error stack:', error.stack);
+    toastr.error(`Text Messaging extension failed to load: ${error.message}`);
   }
-
-  console.log('[st-text-messaging] Extension loaded successfully');
 });
