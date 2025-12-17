@@ -306,6 +306,37 @@
   color: rgba(0, 0, 0, 0.5);
 }
 
+/* ============================================
+   iMessage Color Scheme
+   ============================================ */
+
+/* User (sent) messages - Blue */
+.phone-ui-container.color-imessage .message-bubble.user {
+  background: linear-gradient(135deg, #007AFF 0%, #0056CC 100%);
+  color: white;
+}
+
+/* Character (received) messages - Green */
+.phone-ui-container.color-imessage .message-bubble.character {
+  background: linear-gradient(135deg, #34C759 0%, #28A745 100%);
+  color: white;
+}
+
+/* Light theme adjustments for iMessage scheme */
+.phone-ui-container.theme-light.color-imessage .message-bubble.character {
+  background: linear-gradient(135deg, #34C759 0%, #28A745 100%);
+  color: white;
+}
+
+/* Timestamp colors for iMessage scheme */
+.phone-ui-container.color-imessage .message-bubble.user .message-timestamp {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.phone-ui-container.color-imessage .message-bubble.character .message-timestamp {
+  color: rgba(255, 255, 255, 0.7);
+}
+
 
 /* ============================================
    Message Input Area

@@ -2,7 +2,8 @@
 import {
   initPhoneUI,
   updatePhonePosition,
-  updatePhoneTheme
+  updatePhoneTheme,
+  updateColorScheme
 } from "./lib/phone-ui.js";
 import {
   updateTextingPrompt
@@ -33,6 +34,7 @@ const defaultSettings = {
   position: "right",
   soundEnabled: true,
   theme: "dark",
+  colorScheme: "default",
   showTimestamps: false,
   animationsEnabled: true,
   useTextingStyle: true,
@@ -56,6 +58,7 @@ async function loadSettings() {
   $("#emoji_intensity").val(extension_settings[extensionName].emojiIntensity);
   $("#phone_position").val(extension_settings[extensionName].position);
   $("#phone_theme").val(extension_settings[extensionName].theme);
+  $("#phone_color_scheme").val(extension_settings[extensionName].colorScheme);
   $("#sound_enabled").prop("checked", extension_settings[extensionName].soundEnabled);
   $("#show_timestamps").prop("checked", extension_settings[extensionName].showTimestamps);
   $("#animations_enabled").prop("checked", extension_settings[extensionName].animationsEnabled);
@@ -133,6 +136,17 @@ function onThemeChange(event) {
 }
 
 /**
+ * Event handler: Color scheme changed
+ */
+function onColorSchemeChange(event) {
+  const extension_settings = getSettingsStore();
+  const colorScheme = $(event.target).val();
+  extension_settings[extensionName].colorScheme = colorScheme;
+  saveSettings();
+  updateColorScheme();
+}
+
+/**
  * Event handler: Sound toggle
  */
 function onSoundToggle(event) {
@@ -187,6 +201,7 @@ jQuery(async () => {
     $("#emoji_intensity").on("change", onEmojiIntensityChange);
     $("#phone_position").on("change", onPhonePositionChange);
     $("#phone_theme").on("change", onThemeChange);
+    $("#phone_color_scheme").on("change", onColorSchemeChange);
     $("#sound_enabled").on("input", onSoundToggle);
     $("#show_timestamps").on("input", onTimestampsToggle);
     $("#animations_enabled").on("input", onAnimationsToggle);
