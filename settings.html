@@ -94,6 +94,54 @@
         <span>Enable Animations</span>
       </label>
 
+      <hr class="sysHR" />
+
+      <!-- Advanced: Custom Prompt -->
+      <div class="inline-drawer">
+        <div class="inline-drawer-toggle inline-drawer-header">
+          <span>Advanced: Custom Prompt</span>
+          <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
+        </div>
+        <div class="inline-drawer-content">
+          <div class="margin-top-10">
+            <label class="checkbox_label" for="use_custom_prompt">
+              <input id="use_custom_prompt" type="checkbox" />
+              <span>Use Custom Prompt</span>
+            </label>
+            <small class="notes warning">
+              <i class="fa-solid fa-triangle-exclamation"></i>
+              Requires prompt engineering knowledge. Bad prompts may break responses.
+            </small>
+          </div>
+
+          <div class="margin-top-10">
+            <label for="custom_prompt_text">
+              <span>System Prompt Injection</span>
+            </label>
+            <textarea
+              id="custom_prompt_text"
+              class="text_pole textarea_compact custom-prompt-textarea"
+              rows="8"
+              placeholder="Enter your custom texting style prompt here..."
+              disabled
+            ></textarea>
+            <small class="notes">
+              This prompt is injected when texting mode is active.
+              Use {{char}} and {{user}} for character/user names.
+            </small>
+          </div>
+
+          <div class="margin-top-10 flex-container">
+            <button id="custom_prompt_reset" class="menu_button" type="button">
+              <i class="fa-solid fa-rotate-left"></i> Reset to Default
+            </button>
+            <button id="custom_prompt_preview" class="menu_button" type="button">
+              <i class="fa-solid fa-eye"></i> Preview Current
+            </button>
+          </div>
+        </div>
+      </div>
+
     </div>
   </div>
 </div>

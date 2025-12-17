@@ -6,7 +6,8 @@ import {
   updateColorScheme
 } from "./lib/phone-ui.js";
 import {
-  updateTextingPrompt
+  updateTextingPrompt,
+  getDefaultPrompt
 } from "./lib/prompt-manager.js";
 
 // Extension configuration
@@ -38,7 +39,9 @@ const defaultSettings = {
   showTimestamps: false,
   animationsEnabled: true,
   useTextingStyle: true,
-  emojiIntensity: "medium"
+  emojiIntensity: "medium",
+  useCustomPrompt: false,
+  customPrompt: ""
 };
 
 /**
@@ -62,6 +65,20 @@ async function loadSettings() {
   $("#sound_enabled").prop("checked", extension_settings[extensionName].soundEnabled);
   $("#show_timestamps").prop("checked", extension_settings[extensionName].showTimestamps);
   $("#animations_enabled").prop("checked", extension_settings[extensionName].animationsEnabled);
+
+  // Custom prompt settings
+  const useCustomPrompt = extension_settings[extensionName].useCustomPrompt ?? false;
+  $("#use_custom_prompt").prop("checked", useCustomPrompt);
+  $("#custom_prompt_text").prop("disabled", !useCustomPrompt);
+
+  // Load custom prompt or show current default
+  if (extension_settings[extensionName].customPrompt) {
+    $("#custom_prompt_text").val(extension_settings[extensionName].customPrompt);
+  } else {
+    // Show current default prompt based on intensity
+    const intensity = extension_settings[extensionName].emojiIntensity || 'medium';
+    $("#custom_prompt_text").val(getDefaultPrompt(intensity));
+  }
 }
 
 /**
@@ -176,6 +193,82 @@ function onAnimationsToggle(event) {
   saveSettings();
 }
 
+/**
+ * Event handler: Use custom prompt toggle
+ */
+function onUseCustomPromptToggle(event) {
+  const extension_settings = getSettingsStore();
+  const enabled = Boolean($(event.target).prop("checked"));
+  extension_settings[extensionName].useCustomPrompt = enabled;
+
+  // Enable/disable textarea
+  $("#custom_prompt_text").prop("disabled", !enabled);
+
+  // If enabling and no custom prompt set, copy current default
+  if (enabled && !extension_settings[extensionName].customPrompt) {
+    const intensity = extension_settings[extensionName].emojiIntensity || 'medium';
+    const defaultPrompt = getDefaultPrompt(intensity);
+    extension_settings[extensionName].customPrompt = defaultPrompt;
+    $("#custom_prompt_text").val(defaultPrompt);
+  }
+
+  saveSettings();
+  updateTextingPrompt();
+
+  if (enabled) {
+    toastr.info('Custom prompt enabled');
+  } else {
+    toastr.info('Using preset prompts');
+  }
+}
+
+/**
+ * Event handler: Custom prompt text changed
+ */
+function onCustomPromptChange(event) {
+  const extension_settings = getSettingsStore();
+  const promptText = $(event.target).val();
+  extension_settings[extensionName].customPrompt = promptText;
+  saveSettings();
+  updateTextingPrompt();
+}
+
+/**
+ * Event handler: Reset custom prompt to default
+ */
+function onCustomPromptReset() {
+  const extension_settings = getSettingsStore();
+  const intensity = extension_settings[extensionName].emojiIntensity || 'medium';
+  const defaultPrompt = getDefaultPrompt(intensity);
+
+  extension_settings[extensionName].customPrompt = defaultPrompt;
+  $("#custom_prompt_text").val(defaultPrompt);
+  saveSettings();
+  updateTextingPrompt();
+
+  toastr.success('Prompt reset to default');
+}
+
+/**
+ * Event handler: Preview current prompt (shows what's actually being used)
+ */
+function onCustomPromptPreview() {
+  const extension_settings = getSettingsStore();
+  const useCustom = extension_settings[extensionName].useCustomPrompt ?? false;
+  const intensity = extension_settings[extensionName].emojiIntensity || 'medium';
+
+  let currentPrompt;
+  if (useCustom && extension_settings[extensionName].customPrompt) {
+    currentPrompt = extension_settings[extensionName].customPrompt;
+  } else {
+    currentPrompt = getDefaultPrompt(intensity);
+  }
+
+  // Show in textarea (even if disabled, for preview)
+  $("#custom_prompt_text").val(currentPrompt);
+  toastr.info(`Showing ${useCustom ? 'custom' : intensity + ' preset'} prompt`);
+}
+
 // Extension initialization
 jQuery(async () => {
   try {
@@ -205,6 +298,13 @@ jQuery(async () => {
     $("#sound_enabled").on("input", onSoundToggle);
     $("#show_timestamps").on("input", onTimestampsToggle);
     $("#animations_enabled").on("input", onAnimationsToggle);
+
+    // Custom prompt event listeners
+    $("#use_custom_prompt").on("input", onUseCustomPromptToggle);
+    $("#custom_prompt_text").on("input", onCustomPromptChange);
+    $("#custom_prompt_reset").on("click", onCustomPromptReset);
+    $("#custom_prompt_preview").on("click", onCustomPromptPreview);
+
     console.log('[st-text-messaging] Event listeners registered');
 
     // Load settings

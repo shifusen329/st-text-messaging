@@ -449,3 +449,53 @@
   user-select: none;
   -webkit-user-select: none;
 }
+
+/* ============================================
+   Settings Panel Styles
+   ============================================ */
+
+/* Custom Prompt Textarea */
+.custom-prompt-textarea {
+  width: 100%;
+  min-height: 150px;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.5;
+  resize: vertical;
+  white-space: pre-wrap;
+}
+
+.custom-prompt-textarea:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  background-color: var(--SmartThemeBotMesBlurTintColor, #2a2a2a);
+}
+
+.custom-prompt-textarea:not(:disabled):focus {
+  border-color: var(--SmartThemeQuoteColor, #667eea);
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.2);
+}
+
+/* Warning note style */
+.text-messaging-settings .notes.warning {
+  color: var(--SmartThemeWarningColor, #f0ad4e);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.text-messaging-settings .notes.warning i {
+  font-size: 14px;
+}
+
+/* Button container for custom prompt section */
+.text-messaging-settings .flex-container {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.text-messaging-settings .flex-container .menu_button {
+  flex: 1;
+  min-width: 120px;
+}

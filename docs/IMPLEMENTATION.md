@@ -907,7 +907,17 @@ function summarizeTextingConversation() {
      - Character-specific overrides (optional)
      - Works independently of phone UI visibility
 
-**Deliverable**: Feature-rich messaging experience with authentic texting-style AI responses
+8. **Group Chat Support**
+   - Detect when in ST group chat mode (`context.groupId`)
+   - Display multiple character avatars in header or per-message
+   - Track which character is "texting" based on turn order
+   - Allow user to "@mention" specific characters
+   - Handle multiple character responses in sequence
+   - Different bubble colors or labels per character
+   - Group chat name display in header
+   - Consider "group text" vs "individual DM" modes
+
+**Deliverable**: Feature-rich messaging experience with authentic texting-style AI responses and group chat support
 
 ---
 
