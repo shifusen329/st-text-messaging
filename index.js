@@ -3,7 +3,8 @@ import {
   initPhoneUI,
   updatePhonePosition,
   updatePhoneTheme,
-  updateColorScheme
+  updateColorScheme,
+  togglePhoneUI
 } from "./lib/phone-ui.js";
 import {
   updateTextingPrompt,
@@ -93,12 +94,14 @@ function onPhoneModeToggle(event) {
   // Update prompt injection
   updateTextingPrompt();
 
-  // Show/hide phone toggle button
+  // Show/hide phone toggle buttons (floating + top bar)
   if (enabled) {
     $('#phone-toggle-btn').fadeIn(200);
+    $('#phone-topbar-btn').fadeIn(200);
     toastr.success('Phone messaging mode enabled! 📱');
   } else {
     $('#phone-toggle-btn').fadeOut(200);
+    $('#phone-topbar-btn').fadeOut(200);
     toastr.info('Phone messaging mode disabled');
   }
 }
@@ -269,6 +272,135 @@ function onCustomPromptPreview() {
   toastr.info(`Showing ${useCustom ? 'custom' : intensity + ' preset'} prompt`);
 }
 
+/**
+ * Registers extension with ST's wand/extensions menu for mobile access
+ */
+function registerWandMenuEntry() {
+  const context = getContext();
+
+  // Check if ST has the menu registration API
+  if (typeof context.registerExtensionHelper === 'function') {
+    context.registerExtensionHelper(extensionName, 'Open Phone', togglePhoneUI);
+    console.log('[st-text-messaging] Registered with extension helper menu');
+    return;
+  }
+
+  // Try multiple menu locations ST might use
+  const menuSelectors = [
+    '#extensionsMenu',
+    '#options .options-content',
+    '#top-bar',
+    '.drawer-content'
+  ];
+
+  for (const selector of menuSelectors) {
+    const $menu = $(selector);
+    if ($menu.length > 0) {
+      // Check if already added
+      if ($('#phone-wand-menu-item').length > 0) return;
+
+      const menuItem = $(`
+        <div id="phone-wand-menu-item" class="list-group-item flex-container flexGap5 interactable" title="Open Phone Messages">
+          <i class="fa-solid fa-mobile-screen"></i>
+          <span>Open Phone</span>
+        </div>
+      `);
+
+      menuItem.on('click', () => {
+        const extension_settings = getSettingsStore();
+        if (!extension_settings[extensionName]?.enabled) {
+          toastr.warning('Enable Phone UI in extension settings first');
+          return;
+        }
+        togglePhoneUI();
+      });
+
+      $menu.first().append(menuItem);
+      console.log('[st-text-messaging] Added to menu:', selector);
+      break;
+    }
+  }
+
+  // Also add to the top icons bar if possible (more visible on mobile)
+  addTopBarIcon();
+}
+
+/**
+ * Adds a phone icon to ST's top bar for easy mobile access
+ */
+function addTopBarIcon() {
+  // Look for ST's icon/button bars
+  const topBarSelectors = [
+    '#top-settings-holder',
+    '#leftSendForm',
+    '#rightSendForm',
+    '.send_form'
+  ];
+
+  for (const selector of topBarSelectors) {
+    const $bar = $(selector);
+    if ($bar.length > 0 && $('#phone-topbar-btn').length === 0) {
+      const iconBtn = $(`
+        <div id="phone-topbar-btn" class="fa-solid fa-mobile-screen interactable"
+             title="Open Phone"
+             style="cursor: pointer; padding: 5px; font-size: 1.2em;"></div>
+      `);
+
+      iconBtn.on('click', () => {
+        const extension_settings = getSettingsStore();
+        if (!extension_settings[extensionName]?.enabled) {
+          toastr.warning('Enable Phone UI in extension settings first');
+          return;
+        }
+        togglePhoneUI();
+      });
+
+      // Only show if extension is enabled
+      const extension_settings = getSettingsStore();
+      if (!extension_settings[extensionName]?.enabled) {
+        iconBtn.hide();
+      }
+
+      $bar.first().prepend(iconBtn);
+      console.log('[st-text-messaging] Added top bar icon to:', selector);
+      break;
+    }
+  }
+}
+
+/**
+ * Registers /phone slash command for toggling phone UI
+ */
+function registerSlashCommand() {
+  const context = getContext();
+
+  // Use ST's slash command registration if available
+  if (typeof context.registerSlashCommand === 'function') {
+    context.registerSlashCommand('phone', () => {
+      const extension_settings = getSettingsStore();
+      if (!extension_settings[extensionName]?.enabled) {
+        toastr.warning('Enable Phone UI in extension settings first');
+        return 'Phone UI is disabled';
+      }
+      togglePhoneUI();
+      return 'Toggled phone UI';
+    }, [], 'Toggle the phone messaging interface', true, true);
+    console.log('[st-text-messaging] Registered /phone slash command');
+  } else if (window.registerSlashCommand) {
+    // Fallback to global registration
+    window.registerSlashCommand('phone', () => {
+      const extension_settings = getSettingsStore();
+      if (!extension_settings[extensionName]?.enabled) {
+        toastr.warning('Enable Phone UI in extension settings first');
+        return 'Phone UI is disabled';
+      }
+      togglePhoneUI();
+      return 'Toggled phone UI';
+    }, [], 'Toggle the phone messaging interface', true, true);
+    console.log('[st-text-messaging] Registered /phone slash command (global)');
+  }
+}
+
 // Extension initialization
 jQuery(async () => {
   try {
@@ -318,11 +450,18 @@ jQuery(async () => {
     // Initialize prompt on load
     updateTextingPrompt();
 
-    // Show phone toggle button if enabled
+    // Register with ST's wand menu for mobile access
+    registerWandMenuEntry();
+
+    // Show phone toggle buttons if enabled
     const extension_settings = getSettingsStore();
     if (extension_settings[extensionName]?.enabled) {
       $('#phone-toggle-btn').show();
+      $('#phone-topbar-btn').show();
     }
+
+    // Register slash command for keyboard users
+    registerSlashCommand();
 
     console.log('[st-text-messaging] Extension loaded successfully');
   } catch (error) {
