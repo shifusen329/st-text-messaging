@@ -17,6 +17,19 @@ A phone-style messaging interface for SillyTavern that creates an immersive text
 - Timestamp support (relative and absolute)
 - Sound effects for send/receive (optional)
 
+### Group Chat Support
+- Full group chat compatibility with multiple characters
+- **Inherits all SillyTavern group settings automatically**:
+  - Reply order strategies (Natural, List, Pooled, Manual)
+  - Generation mode (Swap/Join character cards)
+  - Allow self responses setting
+  - Auto mode with configurable delay
+  - Muted character handling
+  - Talkativeness values
+- Stacked avatar display in group header
+- Color-coded message bubbles per character
+- Inline character avatars next to messages
+
 ### Smart AI Responses
 - Three intensity levels for texting style (low/medium/high)
 - Automatic emoji and shorthand injection
@@ -83,6 +96,14 @@ All toggle methods are configurable in settings:
 | Wand Menu Item | Add to extensions menu |
 | /phone Command | Enable slash command |
 
+#### Group Chat Settings
+| Setting | Description |
+|---------|-------------|
+| Show Character Avatars | Display character avatar next to their messages |
+| Color Code Characters | Different bubble colors per character |
+
+**Note**: Group chat behavior (reply order, generation mode, auto mode, etc.) is controlled through SillyTavern's native group settings panel, not this extension.
+
 #### Advanced: Custom Prompt
 For users who want full control over the AI's texting behavior:
 - Enable "Use Custom Prompt" to edit the system prompt injection
@@ -112,6 +133,12 @@ Texting: "i was just thinking about you lol"
     ↓ [Close Phone]
 Regular Chat: "After texting, she felt even more excited about their plans."
 ```
+
+### Group Chat Integration
+The phone UI uses SillyTavern's native `/trigger` command for group generation, which means:
+- All your group settings are respected automatically
+- Character selection follows your configured reply order
+- No separate configuration needed in the extension
 
 ## Prerequisites
 
