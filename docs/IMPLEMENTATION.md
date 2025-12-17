@@ -926,15 +926,17 @@ function summarizeTextingConversation() {
     - ✅ iMessage blue/green option
     - ✅ CSS class-based theming (`color-imessage`)
 
-12. ⏳ **Group Chat Support** (FUTURE)
-    - Detect when in ST group chat mode (`context.groupId`)
-    - Display multiple character avatars in header or per-message
-    - Track which character is "texting" based on turn order
-    - Allow user to "@mention" specific characters
-    - Handle multiple character responses in sequence
-    - Different bubble colors or labels per character
-    - Group chat name display in header
-    - Consider "group text" vs "individual DM" modes
+12. ✅ **Group Chat Support** (COMPLETED)
+    - ✅ Detect when in ST group chat mode (`context.groupId`)
+    - ✅ Display multiple character avatars in header (stacked, up to 3)
+    - ✅ Character name/avatar shown above each character's messages
+    - ✅ Track which character is "texting" with rotation-based turn order
+    - ✅ Different bubble colors per character (8 color variants)
+    - ✅ Group chat name display in header
+    - ✅ Message store restructured for conversation-based storage
+    - ✅ Group-aware prompt injection for LLM context
+    - ⏳ "@mention" specific characters (FUTURE)
+    - ⏳ Manual character selection (FUTURE)
 
 **Deliverable**: ✅ Feature-rich messaging experience with mobile support, multiple access methods, custom prompts, and authentic texting-style AI responses
 
@@ -1205,6 +1207,112 @@ function getActivePrompt() {
 - **Reset to Default**: Copies current preset prompt to textarea
 - **Preview Current**: Shows a toastr with the active prompt (modal for long prompts)
 - **Warning**: Orange-colored note about prompt engineering knowledge required
+
+---
+
+## Group Chat Implementation
+
+### Overview
+
+Group chat support allows the phone UI to work with SillyTavern's group chat feature, displaying messages from multiple characters with proper identification and styling.
+
+### Detection
+
+```javascript
+function isInGroupChat() {
+  const context = getContext();
+  return !!context.groupId;
+}
+```
+
+### Message Store Changes
+
+The message store was restructured to use conversation keys instead of character IDs:
+
+```javascript
+// Individual chat key: "0" (characterId)
+// Group chat key: "group_myGroupId"
+function getConversationKey() {
+  const context = getContext();
+  if (context.groupId) {
+    return `group_${context.groupId}`;
+  }
+  return context.characterId !== undefined ? String(context.characterId) : null;
+}
+```
+
+Messages now include `characterId` and `characterName` fields to track which character sent each message.
+
+### Header Display
+
+- **Individual**: Single avatar + character name
+- **Group**: Up to 3 stacked avatars + group name
+
+```html
+<!-- Single character -->
+<div id="phone-header-single" class="header-mode">
+  <img id="phone-contact-avatar" ...>
+  <span id="phone-contact-name">Character</span>
+</div>
+
+<!-- Group chat -->
+<div id="phone-header-group" class="header-mode">
+  <div id="phone-group-avatars" class="group-avatar-stack">
+    <!-- Avatars populated dynamically -->
+  </div>
+  <span id="phone-group-name">Group Chat</span>
+</div>
+```
+
+### Message Rendering
+
+In group chats, each character's messages display:
+1. Character name above the first message in a sequence
+2. Small avatar next to the name
+3. Unique background color (8 color variants using hash-based assignment)
+
+```javascript
+const characterColorClass = inGroupChat && message.characterId
+  ? `char-color-${hashString(message.characterId) % 8}`
+  : '';
+```
+
+### Response Generation
+
+Character selection uses rotation-based turn order:
+1. Find the last character who sent a message
+2. Select the next character in the group members list
+3. Generate response as that character only
+
+```javascript
+function getActiveGroupCharacter() {
+  const members = getGroupMembers();
+  // ... rotation logic ...
+  return members[(lastCharIndex + 1) % members.length];
+}
+```
+
+### Prompt Injection
+
+Group-specific context is added to the LLM prompt:
+
+```javascript
+if (isInGroupChat()) {
+  groupContext = `GROUP TEXT MODE: This is a group text conversation.
+Participants: ${memberNames}.
+When responding as a character:
+- Only respond as yourself, never speak for other characters
+- React naturally to what others have said
+- Keep group dynamics and relationships in mind`;
+}
+```
+
+### Future Improvements
+
+- `@mention` syntax to direct messages to specific characters
+- Manual character selection dropdown
+- Per-user settings for group behavior
+- ST turn order integration for better character selection
 
 ---
 

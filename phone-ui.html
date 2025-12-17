@@ -6,8 +6,19 @@
     <!-- Phone Header -->
     <div class="phone-header">
       <div class="phone-header-contact">
-        <img id="phone-contact-avatar" class="phone-contact-avatar" src="" alt="">
-        <span id="phone-contact-name">Messages</span>
+        <!-- Single character display -->
+        <div id="phone-header-single" class="header-mode">
+          <img id="phone-contact-avatar" class="phone-contact-avatar" src="" alt="">
+          <span id="phone-contact-name">Messages</span>
+        </div>
+
+        <!-- Group chat display -->
+        <div id="phone-header-group" class="header-mode" style="display: none;">
+          <div id="phone-group-avatars" class="group-avatar-stack">
+            <!-- Avatars populated dynamically -->
+          </div>
+          <span id="phone-group-name">Group Chat</span>
+        </div>
       </div>
       <button id="phone-close-btn" class="phone-close-btn" title="Close phone">
         <i class="fa-solid fa-times"></i>

@@ -47,7 +47,11 @@ const defaultSettings = {
   showFloatingButton: true,
   showTopBarIcon: true,
   showWandMenuItem: true,
-  enableSlashCommand: true
+  enableSlashCommand: true,
+  // Group chat settings (inherit from base by default)
+  groupShowCharacterNames: true,    // Show character name above messages
+  groupColorCodeCharacters: true,   // Different bubble colors per character
+  groupInheritTextingStyle: true    // Use same texting style as individual chats
 };
 
 /**
@@ -91,6 +95,11 @@ async function loadSettings() {
   $("#show_topbar_icon").prop("checked", extension_settings[extensionName].showTopBarIcon ?? true);
   $("#show_wand_menu_item").prop("checked", extension_settings[extensionName].showWandMenuItem ?? true);
   $("#enable_slash_command").prop("checked", extension_settings[extensionName].enableSlashCommand ?? true);
+
+  // Group chat settings
+  $("#group_show_character_names").prop("checked", extension_settings[extensionName].groupShowCharacterNames ?? true);
+  $("#group_color_code_characters").prop("checked", extension_settings[extensionName].groupColorCodeCharacters ?? true);
+  $("#group_inherit_texting_style").prop("checked", extension_settings[extensionName].groupInheritTextingStyle ?? true);
 }
 
 /**
@@ -280,6 +289,37 @@ function onSlashCommandToggle(event) {
   if (!enabled) {
     toastr.info('Refresh page to fully disable /phone command');
   }
+}
+
+/**
+ * Event handler: Group show character names toggle
+ */
+function onGroupShowCharacterNamesToggle(event) {
+  const extension_settings = getSettingsStore();
+  const enabled = Boolean($(event.target).prop("checked"));
+  extension_settings[extensionName].groupShowCharacterNames = enabled;
+  saveSettings();
+}
+
+/**
+ * Event handler: Group color code characters toggle
+ */
+function onGroupColorCodeCharactersToggle(event) {
+  const extension_settings = getSettingsStore();
+  const enabled = Boolean($(event.target).prop("checked"));
+  extension_settings[extensionName].groupColorCodeCharacters = enabled;
+  saveSettings();
+}
+
+/**
+ * Event handler: Group inherit texting style toggle
+ */
+function onGroupInheritTextingStyleToggle(event) {
+  const extension_settings = getSettingsStore();
+  const enabled = Boolean($(event.target).prop("checked"));
+  extension_settings[extensionName].groupInheritTextingStyle = enabled;
+  saveSettings();
+  updateTextingPrompt();
 }
 
 /**
@@ -528,6 +568,11 @@ jQuery(async () => {
     $("#show_topbar_icon").on("input", onTopBarIconToggle);
     $("#show_wand_menu_item").on("input", onWandMenuItemToggle);
     $("#enable_slash_command").on("input", onSlashCommandToggle);
+
+    // Group chat settings event listeners
+    $("#group_show_character_names").on("input", onGroupShowCharacterNamesToggle);
+    $("#group_color_code_characters").on("input", onGroupColorCodeCharactersToggle);
+    $("#group_inherit_texting_style").on("input", onGroupInheritTextingStyleToggle);
 
     console.log('[st-text-messaging] Event listeners registered');
 
