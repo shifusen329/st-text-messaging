@@ -419,6 +419,7 @@
   }
 }
 
+/* Tablet adjustments */
 @media (max-width: 768px) {
   .phone-ui-container {
     width: 90%;
@@ -430,6 +431,148 @@
     left: 50%;
     right: auto;
     transform: translate(-50%, -50%);
+  }
+}
+
+/* ============================================
+   Mobile-First Phone UI
+   On actual mobile devices, go full-screen
+   ============================================ */
+
+@media (max-width: 480px) {
+  /* Full-screen phone UI - no fake frame needed on real phones! */
+  .phone-ui-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    transform: none;
+    z-index: 10000;
+  }
+
+  .phone-ui-container.position-left,
+  .phone-ui-container.position-center,
+  .phone-ui-container.position-right {
+    left: 0;
+    right: 0;
+    transform: none;
+  }
+
+  /* Remove fake phone frame styling on mobile */
+  .phone-frame {
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+  }
+
+  /* Hide the notch on real phones */
+  .phone-frame::before {
+    display: none;
+  }
+
+  /* Adjust header for real mobile - account for safe areas */
+  .phone-header {
+    padding: 15px 15px 12px 15px;
+    padding-top: max(15px, env(safe-area-inset-top));
+  }
+
+  /* Larger touch targets for mobile */
+  .phone-close-btn {
+    font-size: 24px;
+    padding: 10px 15px;
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Viewport fills available space */
+  .phone-viewport {
+    padding: 15px 12px;
+  }
+
+  /* Input area respects safe areas (notch, home indicator) */
+  .phone-input-area {
+    padding: 12px;
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+
+  /* Larger input for fat fingers */
+  .phone-message-input {
+    font-size: 16px; /* Prevents iOS zoom on focus */
+    padding: 12px 16px;
+    min-height: 44px;
+  }
+
+  /* Larger send button */
+  .phone-send-btn {
+    width: 48px;
+    height: 48px;
+    font-size: 20px;
+  }
+
+  /* Message bubbles - use more width on mobile */
+  .message-bubble {
+    max-width: 85%;
+  }
+
+  /* Toggle button - bottom left on mobile for thumb reach */
+  .phone-toggle-btn {
+    bottom: max(20px, env(safe-area-inset-bottom));
+    right: auto;
+    left: 20px;
+    width: 56px;
+    height: 56px;
+    font-size: 24px;
+  }
+}
+
+/* Handle virtual keyboard - when keyboard is open */
+@media (max-width: 480px) and (max-height: 500px) {
+  /* Keyboard is likely open - shrink viewport */
+  .phone-viewport {
+    max-height: 40vh;
+  }
+
+  .phone-header {
+    padding: 10px 15px;
+  }
+}
+
+/* Landscape mobile */
+@media (max-width: 812px) and (orientation: landscape) and (max-height: 500px) {
+  .phone-ui-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    transform: none;
+  }
+
+  .phone-frame {
+    border-radius: 0;
+    border: none;
+  }
+
+  .phone-frame::before {
+    display: none;
+  }
+
+  /* Side-by-side layout in landscape could be nice but keep simple for now */
+  .phone-header {
+    padding: 8px 15px;
+    padding-left: max(15px, env(safe-area-inset-left));
+    padding-right: max(15px, env(safe-area-inset-right));
+  }
+
+  .phone-input-area {
+    padding-left: max(12px, env(safe-area-inset-left));
+    padding-right: max(12px, env(safe-area-inset-right));
   }
 }
 
