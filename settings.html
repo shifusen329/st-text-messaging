@@ -96,6 +96,43 @@
 
       <hr class="sysHR" />
 
+      <!-- Advanced: Toggle Access Options -->
+      <div class="inline-drawer">
+        <div class="inline-drawer-toggle inline-drawer-header">
+          <span>Toggle Access Options</span>
+          <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
+        </div>
+        <div class="inline-drawer-content">
+          <small class="notes">Choose how to open the phone UI</small>
+
+          <div class="margin-top-10">
+            <label class="checkbox_label" for="show_floating_button">
+              <input id="show_floating_button" type="checkbox" />
+              <span>Floating Button</span>
+            </label>
+            <small class="notes">Show floating phone button (bottom corner)</small>
+          </div>
+
+          <label class="checkbox_label" for="show_topbar_icon">
+            <input id="show_topbar_icon" type="checkbox" />
+            <span>Top Bar Icon</span>
+          </label>
+          <small class="notes">Add phone icon to input area</small>
+
+          <label class="checkbox_label" for="show_wand_menu_item">
+            <input id="show_wand_menu_item" type="checkbox" />
+            <span>Wand Menu Item</span>
+          </label>
+          <small class="notes">Add "Open Phone" to extensions menu</small>
+
+          <label class="checkbox_label" for="enable_slash_command">
+            <input id="enable_slash_command" type="checkbox" />
+            <span>/phone Slash Command</span>
+          </label>
+          <small class="notes">Type /phone to toggle (refresh to apply)</small>
+        </div>
+      </div>
+
       <!-- Advanced: Custom Prompt -->
       <div class="inline-drawer">
         <div class="inline-drawer-toggle inline-drawer-header">

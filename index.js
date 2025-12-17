@@ -42,7 +42,12 @@ const defaultSettings = {
   useTextingStyle: true,
   emojiIntensity: "medium",
   useCustomPrompt: false,
-  customPrompt: ""
+  customPrompt: "",
+  // Mobile toggle options
+  showFloatingButton: true,
+  showTopBarIcon: true,
+  showWandMenuItem: true,
+  enableSlashCommand: true
 };
 
 /**
@@ -80,6 +85,12 @@ async function loadSettings() {
     const intensity = extension_settings[extensionName].emojiIntensity || 'medium';
     $("#custom_prompt_text").val(getDefaultPrompt(intensity));
   }
+
+  // Mobile/toggle access settings
+  $("#show_floating_button").prop("checked", extension_settings[extensionName].showFloatingButton ?? true);
+  $("#show_topbar_icon").prop("checked", extension_settings[extensionName].showTopBarIcon ?? true);
+  $("#show_wand_menu_item").prop("checked", extension_settings[extensionName].showWandMenuItem ?? true);
+  $("#enable_slash_command").prop("checked", extension_settings[extensionName].enableSlashCommand ?? true);
 }
 
 /**
@@ -94,10 +105,14 @@ function onPhoneModeToggle(event) {
   // Update prompt injection
   updateTextingPrompt();
 
-  // Show/hide phone toggle buttons (floating + top bar)
+  // Show/hide phone toggle buttons based on individual settings
   if (enabled) {
-    $('#phone-toggle-btn').fadeIn(200);
-    $('#phone-topbar-btn').fadeIn(200);
+    if (extension_settings[extensionName].showFloatingButton ?? true) {
+      $('#phone-toggle-btn').fadeIn(200);
+    }
+    if (extension_settings[extensionName].showTopBarIcon ?? true) {
+      $('#phone-topbar-btn').fadeIn(200);
+    }
     toastr.success('Phone messaging mode enabled! 📱');
   } else {
     $('#phone-toggle-btn').fadeOut(200);
@@ -194,6 +209,77 @@ function onAnimationsToggle(event) {
   const enabled = Boolean($(event.target).prop("checked"));
   extension_settings[extensionName].animationsEnabled = enabled;
   saveSettings();
+}
+
+/**
+ * Event handler: Floating button toggle
+ */
+function onFloatingButtonToggle(event) {
+  const extension_settings = getSettingsStore();
+  const enabled = Boolean($(event.target).prop("checked"));
+  extension_settings[extensionName].showFloatingButton = enabled;
+  saveSettings();
+
+  // Show/hide immediately if extension is enabled
+  if (extension_settings[extensionName].enabled) {
+    if (enabled) {
+      $('#phone-toggle-btn').fadeIn(200);
+    } else {
+      $('#phone-toggle-btn').fadeOut(200);
+    }
+  }
+}
+
+/**
+ * Event handler: Top bar icon toggle
+ */
+function onTopBarIconToggle(event) {
+  const extension_settings = getSettingsStore();
+  const enabled = Boolean($(event.target).prop("checked"));
+  extension_settings[extensionName].showTopBarIcon = enabled;
+  saveSettings();
+
+  // Show/hide immediately if extension is enabled
+  if (extension_settings[extensionName].enabled) {
+    if (enabled) {
+      $('#phone-topbar-btn').fadeIn(200);
+    } else {
+      $('#phone-topbar-btn').fadeOut(200);
+    }
+  }
+}
+
+/**
+ * Event handler: Wand menu item toggle
+ */
+function onWandMenuItemToggle(event) {
+  const extension_settings = getSettingsStore();
+  const enabled = Boolean($(event.target).prop("checked"));
+  extension_settings[extensionName].showWandMenuItem = enabled;
+  saveSettings();
+
+  // Show/hide immediately
+  if (enabled) {
+    $('#phone-wand-menu-item').fadeIn(200);
+  } else {
+    $('#phone-wand-menu-item').fadeOut(200);
+  }
+}
+
+/**
+ * Event handler: Slash command toggle
+ */
+function onSlashCommandToggle(event) {
+  const extension_settings = getSettingsStore();
+  const enabled = Boolean($(event.target).prop("checked"));
+  extension_settings[extensionName].enableSlashCommand = enabled;
+  saveSettings();
+
+  // Note: Slash command can't be unregistered at runtime in most ST versions
+  // User may need to refresh for this to take effect
+  if (!enabled) {
+    toastr.info('Refresh page to fully disable /phone command');
+  }
 }
 
 /**
@@ -437,6 +523,12 @@ jQuery(async () => {
     $("#custom_prompt_reset").on("click", onCustomPromptReset);
     $("#custom_prompt_preview").on("click", onCustomPromptPreview);
 
+    // Mobile/toggle access event listeners
+    $("#show_floating_button").on("input", onFloatingButtonToggle);
+    $("#show_topbar_icon").on("input", onTopBarIconToggle);
+    $("#show_wand_menu_item").on("input", onWandMenuItemToggle);
+    $("#enable_slash_command").on("input", onSlashCommandToggle);
+
     console.log('[st-text-messaging] Event listeners registered');
 
     // Load settings
@@ -450,18 +542,26 @@ jQuery(async () => {
     // Initialize prompt on load
     updateTextingPrompt();
 
-    // Register with ST's wand menu for mobile access
-    registerWandMenuEntry();
-
-    // Show phone toggle buttons if enabled
+    // Register with ST's wand menu for mobile access (if enabled)
     const extension_settings = getSettingsStore();
-    if (extension_settings[extensionName]?.enabled) {
-      $('#phone-toggle-btn').show();
-      $('#phone-topbar-btn').show();
+    if (extension_settings[extensionName]?.showWandMenuItem ?? true) {
+      registerWandMenuEntry();
     }
 
-    // Register slash command for keyboard users
-    registerSlashCommand();
+    // Show phone toggle buttons if extension is enabled AND individual toggles are enabled
+    if (extension_settings[extensionName]?.enabled) {
+      if (extension_settings[extensionName]?.showFloatingButton ?? true) {
+        $('#phone-toggle-btn').show();
+      }
+      if (extension_settings[extensionName]?.showTopBarIcon ?? true) {
+        $('#phone-topbar-btn').show();
+      }
+    }
+
+    // Register slash command for keyboard users (if enabled)
+    if (extension_settings[extensionName]?.enableSlashCommand ?? true) {
+      registerSlashCommand();
+    }
 
     console.log('[st-text-messaging] Extension loaded successfully');
   } catch (error) {

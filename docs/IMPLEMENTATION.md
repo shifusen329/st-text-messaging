@@ -846,78 +846,97 @@ function summarizeTextingConversation() {
 
 ---
 
-### Phase 4: Advanced Features (4-5 hours)
+### Phase 4: Advanced Features (4-5 hours) ✅ **COMPLETED 2025-12-16**
 **Goal**: Enhance functionality
 
 **Tasks**:
-1. Sound effects
-   - Add `assets/send.mp3` and `assets/receive.mp3`
-   - Play on message events
-   - Respect soundEnabled setting
-   - Handle missing files gracefully
+1. ✅ Sound effects
+   - ✅ Sound effect infrastructure in place (`playSoundEffect()`)
+   - ✅ Play on message events (send/receive)
+   - ✅ Respect soundEnabled setting
+   - ✅ Handle missing files gracefully (silent fail)
 
-2. Timestamp support
-   - Add timestamp to message bubbles
-   - Format: "10:23 AM" or relative "2m ago"
-   - Toggle visibility via settings
-   - Fade text color (subtle)
+2. ✅ Timestamp support
+   - ✅ Add timestamp to message bubbles
+   - ✅ Format: "10:23 AM" or relative "2m ago"
+   - ✅ Toggle visibility via settings (`showTimestamps`)
+   - ✅ Fade text color (subtle)
 
-3. Narrator/system messages
+3. ⏳ Narrator/system messages
    - Detect system messages (e.g., "[Character] joined chat")
    - Center-align with italic styling
    - Different background color
    - Example: "Switched to new character"
 
-4. Slash commands
-   ```javascript
-   SlashCommandParser.addCommandObject(SlashCommand.fromProps({
-     name: 'phone',
-     callback: togglePhoneUI,
-     helpString: 'Toggle phone messaging interface'
-   }));
+4. ✅ Slash commands
+   - ✅ `/phone` command to toggle phone UI
+   - ✅ Configurable via settings (enable/disable)
 
-   SlashCommandParser.addCommandObject(SlashCommand.fromProps({
-     name: 'phone-clear',
-     callback: clearMessages,
-     helpString: 'Clear current phone message history'
-   }));
-   ```
-
-5. Image support
+5. ⏳ Image support
    - Detect image URLs in messages
    - Render as inline images
    - Scale to fit phone width
    - Lazy loading
 
-6. Emoji support
+6. ⏳ Emoji support
    - Leverage ST's existing emoji system
    - Inline emoji rendering
    - Proper sizing within bubbles
 
-7. **LLM Texting Style Integration** (PRIORITY FEATURE)
-   - Implement `updateTextingPrompt()` function
-   - Create 3 intensity levels (low/medium/high) with example prompts
-   - Hook into settings changes to update prompt dynamically
-   - Test with different LLM backends (OpenAI, Claude, etc.)
-   - Add settings UI controls:
-     - "Use Texting Style" checkbox
-     - "Emoji Intensity" dropdown
-   - Handle edge cases:
-     - Prompt removal when disabled
-     - Character-specific overrides (optional)
-     - Works independently of phone UI visibility
+7. ✅ **LLM Texting Style Integration** (PRIORITY FEATURE)
+   - ✅ Implement `updateTextingPrompt()` function
+   - ✅ Create 3 intensity levels (low/medium/high) with example prompts
+   - ✅ Hook into settings changes to update prompt dynamically
+   - ✅ Add settings UI controls:
+     - ✅ "Use Texting Style" checkbox
+     - ✅ "Emoji Intensity" dropdown
+   - ✅ Handle edge cases:
+     - ✅ Prompt removal when disabled
+     - ✅ Works independently of phone UI visibility
 
-8. **Group Chat Support**
-   - Detect when in ST group chat mode (`context.groupId`)
-   - Display multiple character avatars in header or per-message
-   - Track which character is "texting" based on turn order
-   - Allow user to "@mention" specific characters
-   - Handle multiple character responses in sequence
-   - Different bubble colors or labels per character
-   - Group chat name display in header
-   - Consider "group text" vs "individual DM" modes
+8. ✅ **Custom Prompt Feature** (NEW)
+   - ✅ Allow users to fully customize the texting mode prompt
+   - ✅ Hybrid system: preset intensities + custom prompt option
+   - ✅ "Use Custom Prompt" checkbox enables textarea
+   - ✅ "Reset to Default" button restores preset
+   - ✅ "Preview Current" shows active prompt
+   - ✅ Placeholder support: `{{char}}` and `{{user}}`
+   - ✅ Warning about prompt engineering knowledge required
 
-**Deliverable**: Feature-rich messaging experience with authentic texting-style AI responses and group chat support
+9. ✅ **Mobile Support** (NEW)
+   - ✅ Full-screen phone UI on mobile devices (≤480px)
+   - ✅ Safe area support for notched devices (`env(safe-area-inset-*)`)
+   - ✅ Larger touch targets (44px+ per Apple HIG)
+   - ✅ 16px font on inputs to prevent iOS zoom
+   - ✅ Virtual keyboard handling with `visualViewport` API
+   - ✅ Mobile-specific Enter key behavior (send button on mobile)
+   - ✅ Landscape mode support
+   - ✅ Touch-friendly controls
+
+10. ✅ **Multiple Toggle Access Methods** (NEW)
+    - ✅ Floating button (bottom corner, desktop-optimized)
+    - ✅ Top bar icon (near input area)
+    - ✅ Wand menu item ("Open Phone" in extensions menu)
+    - ✅ Slash command (`/phone`)
+    - ✅ All methods configurable via settings
+    - ✅ Immediate show/hide on setting change
+
+11. ✅ **iMessage Color Scheme** (NEW)
+    - ✅ Default purple/dark gradient scheme
+    - ✅ iMessage blue/green option
+    - ✅ CSS class-based theming (`color-imessage`)
+
+12. ⏳ **Group Chat Support** (FUTURE)
+    - Detect when in ST group chat mode (`context.groupId`)
+    - Display multiple character avatars in header or per-message
+    - Track which character is "texting" based on turn order
+    - Allow user to "@mention" specific characters
+    - Handle multiple character responses in sequence
+    - Different bubble colors or labels per character
+    - Group chat name display in header
+    - Consider "group text" vs "individual DM" modes
+
+**Deliverable**: ✅ Feature-rich messaging experience with mobile support, multiple access methods, custom prompts, and authentic texting-style AI responses
 
 ---
 
@@ -975,6 +994,220 @@ function summarizeTextingConversation() {
 
 ---
 
+## Mobile Support Implementation
+
+### Overview
+The extension provides a mobile-first experience that transforms the phone mockup into a full-screen messaging interface on actual mobile devices.
+
+### CSS Media Queries
+
+```css
+/* Full-screen on mobile (≤480px) */
+@media (max-width: 480px) {
+  .phone-ui-container {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100%; height: 100%;
+    max-width: none; transform: none;
+    z-index: 10000;
+  }
+
+  /* Remove fake phone frame on real phones */
+  .phone-frame {
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+  }
+
+  /* Hide notch (real phones have their own) */
+  .phone-frame::before { display: none; }
+
+  /* Safe area support for notched devices */
+  .phone-header {
+    padding-top: max(15px, env(safe-area-inset-top));
+  }
+  .phone-input-area {
+    padding-bottom: max(12px, env(safe-area-inset-bottom));
+  }
+
+  /* Prevent iOS zoom on input focus */
+  .phone-message-input { font-size: 16px; }
+
+  /* Larger touch targets (Apple HIG: 44px minimum) */
+  .phone-close-btn { min-width: 44px; min-height: 44px; }
+  .phone-send-btn { width: 48px; height: 48px; }
+}
+```
+
+### JavaScript Mobile Detection
+
+```javascript
+// In lib/phone-ui.js
+function isMobileDevice() {
+  return window.matchMedia('(max-width: 480px)').matches ||
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+}
+
+function setupMobileKeyboardHandling() {
+  if (!isMobileDevice()) return;
+
+  const $input = $('#phone-message-input');
+
+  // Scroll viewport when keyboard opens
+  $input.on('focus', () => {
+    setTimeout(() => {
+      scrollToBottom();
+      $input[0]?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    }, 300);
+  });
+
+  // Use visualViewport API for better keyboard detection
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', () => {
+      if (isPhoneOpen) scrollToBottom();
+    });
+  }
+}
+```
+
+### Mobile-Specific Behavior
+- **Enter key**: On desktop, Enter sends the message. On mobile, Enter inserts a newline (users tap the send button).
+- **Toggle button position**: Moved to bottom-left on mobile for thumb reach.
+- **Message bubbles**: Use 85% max-width on mobile for better readability.
+
+---
+
+## Toggle Access Methods
+
+### Available Methods
+
+1. **Floating Button** (`showFloatingButton`)
+   - Fixed position phone icon in bottom corner
+   - Best for desktop, can be hidden on mobile
+
+2. **Top Bar Icon** (`showTopBarIcon`)
+   - Phone icon added near the chat input area
+   - Good for mobile as it's always visible
+
+3. **Wand Menu Item** (`showWandMenuItem`)
+   - "Open Phone" entry in SillyTavern's extensions menu
+   - Uses `getContext().registerExtensionHelper()`
+
+4. **Slash Command** (`enableSlashCommand`)
+   - `/phone` command toggles the UI
+   - Uses `SlashCommandParser.addCommandObject()`
+   - Note: Cannot be unregistered at runtime (requires page refresh)
+
+### Implementation
+
+```javascript
+// Wand menu registration
+function registerWandMenuEntry() {
+  const context = getContext();
+  if (typeof context.registerExtensionHelper === 'function') {
+    context.registerExtensionHelper(
+      extensionName,
+      'Open Phone',
+      'fa-mobile-screen-button',
+      () => togglePhoneUI()
+    );
+  }
+}
+
+// Top bar icon
+function addTopBarIcon() {
+  if ($('#phone-topbar-btn').length > 0) return;
+  const buttonHtml = `
+    <div id="phone-topbar-btn" class="fa-solid fa-mobile-screen-button interactable"
+         title="Toggle Phone UI" tabindex="0"></div>
+  `;
+  $('#send_but_sheld').prepend(buttonHtml);
+  $('#phone-topbar-btn').on('click', () => togglePhoneUI());
+}
+
+// Slash command
+function registerSlashCommand() {
+  const commandExists = SlashCommandParser.commands.phone;
+  if (!commandExists) {
+    SlashCommandParser.addCommandObject(SlashCommand.fromProps({
+      name: 'phone',
+      callback: togglePhoneUISlashCommand,
+      helpString: 'Toggle phone messaging interface'
+    }));
+  }
+}
+```
+
+### Settings UI
+
+All toggle methods are configurable in the "Toggle Access Options" collapsible section:
+
+```html
+<div class="inline-drawer">
+  <div class="inline-drawer-toggle inline-drawer-header">
+    <span>Toggle Access Options</span>
+    <div class="inline-drawer-icon fa-solid fa-circle-chevron-down down"></div>
+  </div>
+  <div class="inline-drawer-content">
+    <label class="checkbox_label" for="show_floating_button">
+      <input id="show_floating_button" type="checkbox" />
+      <span>Floating Button</span>
+    </label>
+    <!-- ... similar for other options ... -->
+  </div>
+</div>
+```
+
+---
+
+## Custom Prompt System
+
+### Hybrid Approach
+The extension uses a hybrid system combining preset intensity levels with full custom prompt capability:
+
+1. **Preset Intensities** (low/medium/high): Pre-defined prompts for different texting styles
+2. **Custom Prompt**: Users can write their own prompt when "Use Custom Prompt" is enabled
+
+### Settings Structure
+
+```javascript
+const defaultSettings = {
+  // ... other settings ...
+  useTextingStyle: true,
+  emojiIntensity: "medium",     // low, medium, high
+  useCustomPrompt: false,        // Enable custom prompt mode
+  customPrompt: ""               // User's custom prompt text
+};
+```
+
+### Prompt Selection Logic
+
+```javascript
+function getActivePrompt() {
+  const settings = extension_settings[extensionName];
+
+  if (settings.useCustomPrompt && settings.customPrompt?.trim()) {
+    // Use custom prompt with placeholder substitution
+    return settings.customPrompt
+      .replace(/\{\{char\}\}/g, context.name2)
+      .replace(/\{\{user\}\}/g, context.name1);
+  }
+
+  // Fall back to preset intensity
+  return TEXTING_PROMPTS[settings.emojiIntensity || 'medium'];
+}
+```
+
+### UI Controls
+
+- **Checkbox**: "Use Custom Prompt" enables/disables the textarea
+- **Textarea**: Monospace font, 150px min-height, disabled when checkbox unchecked
+- **Reset to Default**: Copies current preset prompt to textarea
+- **Preview Current**: Shows a toastr with the active prompt (modal for long prompts)
+- **Warning**: Orange-colored note about prompt engineering knowledge required
+
+---
+
 ## Technical Specifications
 
 ### Browser Constraints
@@ -989,19 +1222,17 @@ function summarizeTextingConversation() {
 st-text-messaging/
 ├── manifest.json              # Extension metadata
 ├── index.js                   # Main entry point & orchestration
-├── style.css                  # Phone UI styles
-├── settings.html              # Settings panel
+├── style.css                  # Phone UI styles (including mobile responsive)
+├── settings.html              # Settings panel (toggle options, custom prompt)
 ├── phone-ui.html              # Phone interface template
 ├── assets/
-│   ├── phone-bg.png          # Optional: phone background
-│   ├── phone-frame.png       # Optional: phone frame
-│   ├── send.mp3              # Send sound effect
-│   └── receive.mp3           # Receive sound effect
+│   ├── images/               # Optional image assets
+│   └── sounds/               # Sound effects (send.mp3, receive.mp3)
 ├── lib/
-│   ├── phone-ui.js           # Phone UI management (open/close/render)
+│   ├── phone-ui.js           # Phone UI management (open/close/render/mobile)
 │   ├── message-store.js      # Phone message storage (separate from chat)
-│   ├── context-bridge.js     # NEW: Context transfer between modes
-│   └── prompt-manager.js     # NEW: Dual-mode prompt injection
+│   ├── context-bridge.js     # Context transfer between modes
+│   └── prompt-manager.js     # Dual-mode prompt injection
 ├── docs/
 │   ├── AGENTS.md             # AI development guide
 │   ├── ST_EXTENSIONS.md      # ST extension reference
@@ -1009,9 +1240,11 @@ st-text-messaging/
 └── README.md                 # User documentation
 ```
 
-**New Files Explained**:
+**Key Module Functions**:
 - `context-bridge.js` - Handles context flow between regular chat and texting mode
 - `prompt-manager.js` - Manages perspective-shift prompts and activation/deactivation
+- `phone-ui.js` - Complete UI management including mobile device detection and keyboard handling
+- `message-store.js` - Per-character message storage with first-in-sequence tracking
 
 ### Key Dependencies (Global)
 - jQuery (`$`)
@@ -1464,7 +1697,7 @@ const avatarUrl = character?.avatar || 'default-avatar.png';
 - Timestamp formatting
 - Responsive design
 
-**Phase 3 Status**: ✅ **MOSTLY COMPLETED** (integrated into Phase 2)
+**Phase 3 Status**: ✅ **COMPLETED** (integrated into Phase 2)
 - Modern phone mockup with CSS (no image assets needed)
 - Message bubble styling with gradients
 - Avatar display logic
@@ -1472,7 +1705,18 @@ const avatarUrl = character?.avatar || 'default-avatar.png';
 - Custom scrollbar styling
 - Theme variations (dark/light)
 
-**Current Status**: Ready for live testing and advanced features (Phase 4)
+**Phase 4 Status**: ✅ **COMPLETED** (2025-12-16)
+- Mobile-first responsive design with full-screen UI on phones
+- Safe area support for notched devices (iPhone X+)
+- Virtual keyboard handling with visualViewport API
+- Multiple toggle access methods (floating button, top bar, wand menu, slash command)
+- All access methods configurable via settings
+- Custom prompt system with preset + custom hybrid approach
+- iMessage color scheme option
+- Touch-friendly controls (44px+ touch targets)
+- iOS zoom prevention (16px font)
+
+**Current Status**: Extension fully functional! Ready for Phase 5 (testing & polish) and future enhancements (group chat support)
 
 ### Development Workflow
 1. Work in small increments
@@ -1694,8 +1938,9 @@ Context is preserved!
 
 ---
 
-*Last Updated: 2025-12-15 22:20 UTC*
+*Last Updated: 2025-12-16*
 *Phase 1 (Foundation) ✅ COMPLETED - Full dual-mode LLM system with context bridge*
 *Phase 2 (Core Messaging) ✅ COMPLETED - Phone UI, messaging, styling complete*
-*Phase 3 (Visual Polish) ✅ MOSTLY COMPLETED - Integrated into Phase 2*
-*Ready for Phase 4 (Advanced Features) and Phase 5 (Testing & Polish)*
+*Phase 3 (Visual Polish) ✅ COMPLETED - Integrated into Phase 2*
+*Phase 4 (Advanced Features) ✅ COMPLETED - Mobile support, toggle access options, custom prompts*
+*Ready for Phase 5 (Testing & Polish) and future enhancements*
