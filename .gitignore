@@ -61,3 +61,4 @@ coverage/
 # SillyTavern specific (if testing locally)
 # settings.json
 # user-settings.json
+.gemini/
