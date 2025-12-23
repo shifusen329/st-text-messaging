@@ -2,6 +2,8 @@
 
 A phone-style messaging interface for SillyTavern that creates an immersive texting experience with your AI characters. Inspired by Yet Another Phone (YAP) for Ren'py.
 
+![Phone UI](assets/phone.jpg)
+
 ## Features
 
 ### Dual-Mode Conversation System
@@ -58,6 +60,8 @@ All toggle methods are configurable in settings:
 3. Enter the repository URL
 4. Click Install
 
+![Installation](assets/install.jpg)
+
 ### Manual Installation
 1. Navigate to your SillyTavern installation
 2. Go to `public/scripts/extensions/third-party/`
@@ -74,6 +78,8 @@ All toggle methods are configurable in settings:
 5. Close the phone to return to normal chat
 
 ### Settings Overview
+
+![Settings](assets/settings.png)
 
 #### Main Settings
 | Setting | Description |
@@ -119,6 +125,8 @@ The extension maintains conversation context across modes:
 1. **Opening Phone**: Recent chat messages are summarized and injected as context
 2. **During Texting**: Messages sync to main chat (prefixed with 📱)
 3. **Closing Phone**: Texting summary available for narrative continuity
+
+![Chat Sync](assets/chat.jpg)
 
 ### Perspective Switching
 - **Regular Chat**: Character speaks in third person ("She smiled and replied...")
