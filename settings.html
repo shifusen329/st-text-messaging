@@ -124,6 +124,21 @@
             <span>Use Same Texting Style</span>
           </label>
           <small class="notes">Apply texting style settings to group chats</small>
+
+          <div class="margin-top-10">
+            <label for="context_message_count">
+              <span>Context Message Count</span>
+            </label>
+            <input
+              id="context_message_count"
+              type="number"
+              class="text_pole"
+              min="5"
+              max="50"
+              value="10"
+            />
+            <small class="notes">Number of recent messages to include in AI context (5-50). Higher values help in group chats where multiple characters respond quickly.</small>
+          </div>
         </div>
       </div>
 

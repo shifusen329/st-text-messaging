@@ -51,7 +51,9 @@ const defaultSettings = {
   // Group chat settings (inherit from base by default)
   groupShowCharacterNames: true,    // Show character name above messages
   groupColorCodeCharacters: true,   // Different bubble colors per character
-  groupInheritTextingStyle: true    // Use same texting style as individual chats
+  groupInheritTextingStyle: true,   // Use same texting style as individual chats
+  // Context settings
+  contextMessageCount: 10           // Number of recent messages to include in context
 };
 
 /**
@@ -100,6 +102,9 @@ async function loadSettings() {
   $("#group_show_character_names").prop("checked", extension_settings[extensionName].groupShowCharacterNames ?? true);
   $("#group_color_code_characters").prop("checked", extension_settings[extensionName].groupColorCodeCharacters ?? true);
   $("#group_inherit_texting_style").prop("checked", extension_settings[extensionName].groupInheritTextingStyle ?? true);
+
+  // Context settings
+  $("#context_message_count").val(extension_settings[extensionName].contextMessageCount ?? 10);
 }
 
 /**
@@ -320,6 +325,19 @@ function onGroupInheritTextingStyleToggle(event) {
   extension_settings[extensionName].groupInheritTextingStyle = enabled;
   saveSettings();
   updateTextingPrompt();
+}
+
+/**
+ * Event handler: Context message count changed
+ */
+function onContextMessageCountChange(event) {
+  const extension_settings = getSettingsStore();
+  const count = parseInt($(event.target).val(), 10) || 10;
+  // Clamp between 5 and 50
+  const clampedCount = Math.max(5, Math.min(50, count));
+  extension_settings[extensionName].contextMessageCount = clampedCount;
+  $(event.target).val(clampedCount); // Update UI if clamped
+  saveSettings();
 }
 
 /**
@@ -573,6 +591,9 @@ jQuery(async () => {
     $("#group_show_character_names").on("input", onGroupShowCharacterNamesToggle);
     $("#group_color_code_characters").on("input", onGroupColorCodeCharactersToggle);
     $("#group_inherit_texting_style").on("input", onGroupInheritTextingStyleToggle);
+
+    // Context settings event listeners
+    $("#context_message_count").on("change", onContextMessageCountChange);
 
     console.log('[st-text-messaging] Event listeners registered');
 
