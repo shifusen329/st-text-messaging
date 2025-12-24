@@ -622,10 +622,8 @@
     z-index: 10000;
   }
 
-  /* When JS sets explicit height for keyboard handling, respect it */
-  .phone-ui-container[style*="height"] {
-    height: auto !important;
-  }
+  /* When JS sets explicit height for keyboard handling, the inline style takes precedence */
+  /* No override needed - inline styles naturally override stylesheet rules */
 
   .phone-ui-container.position-left,
   .phone-ui-container.position-center,
