@@ -4,12 +4,18 @@ import {
   updatePhonePosition,
   updatePhoneTheme,
   updateColorScheme,
-  togglePhoneUI
+  togglePhoneUI,
+  isPhoneUIOpen,
+  renderAllMessages
 } from "./lib/phone-ui.js";
 import {
   updateTextingPrompt,
   getDefaultPrompt
 } from "./lib/prompt-manager.js";
+import {
+  syncWithMainChat,
+  clearMessages
+} from "./lib/message-store.js";
 
 // Extension configuration
 const extensionName = "st-text-messaging";
@@ -341,6 +347,64 @@ function onContextMessageCountChange(event) {
 }
 
 /**
+ * Event handler: Main chat message deleted
+ * Syncs phone UI with main chat when messages are deleted
+ */
+function onMainChatMessageDeleted() {
+  const removedCount = syncWithMainChat();
+  if (removedCount > 0 && isPhoneUIOpen()) {
+    // Re-render phone UI to reflect deleted messages
+    renderAllMessages();
+    console.log('[st-text-messaging] Phone UI synced after message deletion');
+  }
+}
+
+/**
+ * Event handler: Chat changed (switched character/group)
+ * Clears phone message store for new conversation
+ */
+function onChatChanged() {
+  // Clear the current phone message store when switching chats
+  // The phone UI will reconstruct from main chat when opened
+  clearMessages();
+  if (isPhoneUIOpen()) {
+    renderAllMessages();
+  }
+  console.log('[st-text-messaging] Chat changed, phone messages cleared');
+}
+
+/**
+ * Registers event listeners for SillyTavern events
+ */
+function registerSTEventListeners() {
+  const context = getContext();
+  const { eventSource, event_types } = context;
+
+  if (!eventSource || !event_types) {
+    console.warn('[st-text-messaging] Event system not available');
+    return;
+  }
+
+  // Listen for message deletion in main chat
+  if (event_types.MESSAGE_DELETED) {
+    eventSource.on(event_types.MESSAGE_DELETED, onMainChatMessageDeleted);
+    console.log('[st-text-messaging] Registered MESSAGE_DELETED listener');
+  }
+
+  // Listen for chat changes (switching characters/groups)
+  if (event_types.CHAT_CHANGED) {
+    eventSource.on(event_types.CHAT_CHANGED, onChatChanged);
+    console.log('[st-text-messaging] Registered CHAT_CHANGED listener');
+  }
+
+  // Also listen for message edits if available
+  if (event_types.MESSAGE_EDITED) {
+    eventSource.on(event_types.MESSAGE_EDITED, onMainChatMessageDeleted);
+    console.log('[st-text-messaging] Registered MESSAGE_EDITED listener');
+  }
+}
+
+/**
  * Event handler: Use custom prompt toggle
  */
 function onUseCustomPromptToggle(event) {
@@ -604,6 +668,9 @@ jQuery(async () => {
     // Initialize phone UI
     initPhoneUI();
     console.log('[st-text-messaging] Phone UI initialized');
+
+    // Register SillyTavern event listeners for sync
+    registerSTEventListeners();
 
     // Initialize prompt on load
     updateTextingPrompt();
