@@ -839,3 +839,257 @@
   flex: 1;
   min-width: 120px;
 }
+
+/* ============================================
+   Message Action Menu (Edit/Delete/Copy)
+   ============================================ */
+
+.message-action-menu {
+  position: fixed;
+  background: #2a2a2a;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  padding: 8px 0;
+  z-index: 10001;
+  min-width: 140px;
+  animation: menuFadeIn 0.15s ease-out;
+}
+
+@keyframes menuFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.message-action-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  width: 100%;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+  text-align: left;
+}
+
+.message-action-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.message-action-btn i {
+  width: 16px;
+  text-align: center;
+  opacity: 0.8;
+}
+
+.message-action-delete {
+  color: #ff6b6b;
+}
+
+.message-action-delete:hover {
+  background: rgba(255, 107, 107, 0.15);
+}
+
+/* Message selected state */
+.message-row.message-selected .message-bubble {
+  box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.5);
+}
+
+/* ============================================
+   Message Edit Mode
+   ============================================ */
+
+.message-bubble.editing {
+  padding: 8px;
+  min-width: 200px;
+}
+
+.message-edit-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.message-edit-input {
+  width: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  padding: 8px 10px;
+  color: inherit;
+  font-size: 15px;
+  font-family: inherit;
+  line-height: 1.4;
+  resize: none;
+  outline: none;
+  min-height: 36px;
+  max-height: 150px;
+  overflow-y: auto;
+}
+
+.message-edit-input:focus {
+  border-color: rgba(102, 126, 234, 0.6);
+}
+
+.phone-ui-container.theme-light .message-edit-input {
+  background: rgba(0, 0, 0, 0.05);
+  border-color: rgba(0, 0, 0, 0.15);
+}
+
+.message-edit-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.message-edit-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  transition: all 0.15s;
+}
+
+.message-edit-btn.save {
+  background: #4caf50;
+  color: white;
+}
+
+.message-edit-btn.save:hover {
+  background: #43a047;
+  transform: scale(1.1);
+}
+
+.message-edit-btn.cancel {
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.message-edit-btn.cancel:hover {
+  background: rgba(255, 255, 255, 0.25);
+  transform: scale(1.1);
+}
+
+.phone-ui-container.theme-light .message-edit-btn.cancel {
+  background: rgba(0, 0, 0, 0.1);
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.phone-ui-container.theme-light .message-edit-btn.cancel:hover {
+  background: rgba(0, 0, 0, 0.15);
+}
+
+/* Edited indicator */
+.message-edited-indicator {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.5);
+  font-style: italic;
+  margin-top: 2px;
+}
+
+.phone-ui-container.theme-light .message-edited-indicator {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+/* ============================================
+   Message Delete Animation
+   ============================================ */
+
+.message-row.message-deleted {
+  opacity: 0.4;
+  text-decoration: line-through;
+  transition: opacity 0.2s;
+}
+
+.message-row.message-deleted .message-bubble {
+  background: rgba(255, 107, 107, 0.2) !important;
+}
+
+/* ============================================
+   Undo Toast
+   ============================================ */
+
+.phone-undo-toast {
+  position: absolute;
+  bottom: 80px;
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: #333;
+  color: #fff;
+  padding: 12px 16px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  z-index: 10002;
+  opacity: 0;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.phone-undo-toast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.phone-undo-btn {
+  background: #667eea;
+  color: white;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.phone-undo-btn:hover {
+  background: #5a6fd6;
+}
+
+/* Light theme adjustments */
+.phone-ui-container.theme-light .phone-undo-toast {
+  background: #f5f5f5;
+  color: #333;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+/* Mobile adjustments for undo toast */
+@media (max-width: 480px) {
+  .phone-undo-toast {
+    bottom: 90px;
+    left: 16px;
+    right: 16px;
+    transform: translateX(0) translateY(20px);
+    justify-content: space-between;
+  }
+
+  .phone-undo-toast.visible {
+    transform: translateX(0) translateY(0);
+  }
+
+  .message-action-menu {
+    min-width: 160px;
+  }
+
+  .message-action-btn {
+    padding: 14px 18px;
+    font-size: 15px;
+  }
+}
