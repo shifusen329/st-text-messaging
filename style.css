@@ -889,6 +889,14 @@
   opacity: 0.8;
 }
 
+.message-action-regenerate {
+  color: #4ecdc4;
+}
+
+.message-action-regenerate:hover {
+  background: rgba(78, 205, 196, 0.15);
+}
+
 .message-action-delete {
   color: #ff6b6b;
 }
