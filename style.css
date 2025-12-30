@@ -61,6 +61,47 @@
   right: 20px;
 }
 
+/* Phone Sizes */
+.phone-ui-container.size-normal {
+  width: 400px;
+  height: 700px;
+}
+
+.phone-ui-container.size-large {
+  width: 500px;
+  height: 850px;
+}
+
+.phone-ui-container.size-fullscreen {
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  width: auto;
+  height: auto;
+  transform: none;
+}
+
+/* Fullscreen overrides position classes */
+.phone-ui-container.size-fullscreen.position-left,
+.phone-ui-container.size-fullscreen.position-center,
+.phone-ui-container.size-fullscreen.position-right {
+  left: 10px;
+  right: 10px;
+  transform: none;
+}
+
+/* Fullscreen adjustments for phone frame */
+.phone-ui-container.size-fullscreen .phone-frame {
+  border-radius: 20px;
+  border-width: 8px;
+}
+
+.phone-ui-container.size-fullscreen .phone-frame::before {
+  /* Hide the notch in fullscreen mode */
+  display: none;
+}
+
 /* ============================================
    Phone Frame
    ============================================ */
@@ -605,8 +646,12 @@
    ============================================ */
 
 @media (max-width: 480px) {
-  /* Nearly full-screen phone UI with visual border */
-  .phone-ui-container {
+  /* On mobile, always use fullscreen layout regardless of size setting */
+  /* Size classes (size-normal, size-large, size-fullscreen) are for desktop only */
+  .phone-ui-container,
+  .phone-ui-container.size-normal,
+  .phone-ui-container.size-large,
+  .phone-ui-container.size-fullscreen {
     position: fixed;
     top: 8px;
     left: 8px;

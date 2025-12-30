@@ -4,6 +4,7 @@ import {
   updatePhonePosition,
   updatePhoneTheme,
   updateColorScheme,
+  updatePhoneSize,
   togglePhoneUI,
   isPhoneUIOpen,
   renderAllMessages
@@ -40,6 +41,7 @@ function saveSettings() {
 const defaultSettings = {
   enabled: false,
   position: "right",
+  phoneSize: "normal",
   soundEnabled: true,
   theme: "dark",
   colorScheme: "default",
@@ -78,6 +80,7 @@ async function loadSettings() {
   $("#texting_style_enabled").prop("checked", extension_settings[extensionName].useTextingStyle);
   $("#emoji_intensity").val(extension_settings[extensionName].emojiIntensity);
   $("#phone_position").val(extension_settings[extensionName].position);
+  $("#phone_size").val(extension_settings[extensionName].phoneSize || "normal");
   $("#phone_theme").val(extension_settings[extensionName].theme);
   $("#phone_color_scheme").val(extension_settings[extensionName].colorScheme);
   $("#sound_enabled").prop("checked", extension_settings[extensionName].soundEnabled);
@@ -177,6 +180,17 @@ function onPhonePositionChange(event) {
   extension_settings[extensionName].position = position;
   saveSettings();
   updatePhonePosition();
+}
+
+/**
+ * Event handler: Phone size changed
+ */
+function onPhoneSizeChange(event) {
+  const extension_settings = getSettingsStore();
+  const size = $(event.target).val();
+  extension_settings[extensionName].phoneSize = size;
+  saveSettings();
+  updatePhoneSize();
 }
 
 /**
@@ -633,6 +647,7 @@ jQuery(async () => {
     $("#texting_style_enabled").on("input", onTextingStyleToggle);
     $("#emoji_intensity").on("change", onEmojiIntensityChange);
     $("#phone_position").on("change", onPhonePositionChange);
+    $("#phone_size").on("change", onPhoneSizeChange);
     $("#phone_theme").on("change", onThemeChange);
     $("#phone_color_scheme").on("change", onColorSchemeChange);
     $("#sound_enabled").on("input", onSoundToggle);
